@@ -399,21 +399,16 @@ export function Chat() {
           {!messages.length && !isThinking ? (
             <div className="flex-1 flex items-center justify-center p-8">
               <div className="text-center max-w-2xl">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <MessageSquare className="w-8 h-8 text-primary" />
-                </div>
-                <h1 className="text-3xl font-semibold text-foreground mb-4">
+                <h1 className="text-4xl font-medium text-foreground mb-2">
                   Chat with William Go
                 </h1>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  Your dedicated AI assistant for District 2 insights, community updates, 
-                  and policy discussions. Ask about Great Park development, transportation, 
-                  housing, or any other district priorities.
+                <p className="text-xl text-muted-foreground">
+                  Irvine Councilmember District 2
                 </p>
                 {!apiKey && (
                   <Button 
                     onClick={() => setShowApiKeyModal(true)}
-                    className="mt-4"
+                    className="mt-8"
                   >
                     <Settings className="w-4 h-4 mr-2" />
                     Set OpenAI API Key
@@ -463,26 +458,24 @@ export function Chat() {
             </ScrollArea>
           )}
           
-          <div className="p-4 border-t border-border">
+          <div className="p-6">
             <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-              <div className="flex gap-3 items-end">
-                <div className="flex-1 relative">
-                  <Input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder={apiKey ? "Ask William Go about District 2, Great Park, transportation, housing..." : "Please set your OpenAI API key first"}
-                    className="pr-12 py-3 text-base border-2 rounded-xl focus:border-primary/50 bg-background"
-                    disabled={isThinking || isProcessingResponse || !apiKey}
-                  />
-                  <Button
-                    type="submit"
-                    size="icon"
-                    disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg bg-primary hover:bg-primary/90"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
+              <div className="relative">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
+                  className="w-full pl-4 pr-12 py-4 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                  disabled={isThinking || isProcessingResponse || !apiKey}
+                />
+                <Button
+                  type="submit"
+                  size="icon"
+                  disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
               </div>
             </form>
           </div>
