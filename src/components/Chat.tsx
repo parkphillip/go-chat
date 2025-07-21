@@ -601,7 +601,7 @@ export function Chat() {
           variant="outline"
           size="icon"
           onClick={() => setSidebarOpen(true)}
-          className="fixed left-4 top-4 z-20 h-10 w-10 bg-background border-2 shadow-lg hover:shadow-xl transition-all duration-200"
+          className="fixed left-4 top-4 z-20 h-10 w-10 bg-background shadow-lg hover:shadow-xl transition-all duration-200"
         >
           <PanelLeft className="h-4 w-4" />
         </Button>
