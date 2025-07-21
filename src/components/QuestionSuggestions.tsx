@@ -12,7 +12,7 @@ export function QuestionSuggestions({ suggestions, onSuggestionClick }: Question
       <div className="border-l-2 border-muted-foreground/20 pl-4">
         <div className="space-y-2">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Continue the conversation
+            Related
           </p>
           <div className="space-y-2">
             {suggestions.map((suggestion, index) => (
