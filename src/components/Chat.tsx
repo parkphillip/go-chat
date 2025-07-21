@@ -535,9 +535,17 @@ export function Chat() {
       alt="William Go, Irvine City Councilmember District 2"
       className="w-48 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500"
     />
-    {/* Seamless fade overlay without visible lines */}
+    {/* Enhanced fade with Gaussian blur and brightness matching */}
     <div className="absolute inset-0">
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/60 via-background/20 to-transparent opacity-100"></div>
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-32"
+        style={{
+          background: 'linear-gradient(to top, rgb(255,255,255) 0%, rgba(255,255,255,0.9) 20%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.3) 70%, transparent 100%)',
+          filter: 'blur(2.5px)',
+          maskImage: 'linear-gradient(to top, black 0%, black 60%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to top, black 0%, black 60%, transparent 100%)'
+        }}
+      ></div>
     </div>
   </div>
 </div>
