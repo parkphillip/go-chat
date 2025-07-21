@@ -505,18 +505,20 @@ export function Chat() {
             <ScrollArea className="flex-1 p-4">
               <div className="max-w-3xl mx-auto space-y-6 py-4">
                 {messages.map((message, index) => {
-                  // Strategic suggestions: show 40% of the time for assistant messages
-                  // Prioritize early messages and avoid if response already has questions
+                  // Strategic suggestions: show based on deterministic conditions to avoid flickering
                   const isAssistantMessage = message.role === 'assistant' && !message.isTyping;
                   const isLatestMessage = index === messages.length - 1;
                   const hasQuestions = message.content.includes('?');
                   const isEarlyInConversation = index <= 5; // First few exchanges
                   
-                  // 40% chance of showing suggestions, higher chance early in conversation
+                  // Deterministic approach: show based on message length and position
+                  // Show for every 2nd-3rd assistant message, avoid if already has questions
+                  const messageHash = message.id.charCodeAt(message.id.length - 1); // Use message ID for consistency
                   const shouldShowSuggestions = isAssistantMessage && 
                     isLatestMessage && 
                     !hasQuestions && 
-                    (isEarlyInConversation ? Math.random() < 0.6 : Math.random() < 0.3);
+                    isEarlyInConversation &&
+                    (messageHash % 3 === 0 || messageHash % 5 === 0); // ~40% chance but deterministic
                   
                   const suggestions = shouldShowSuggestions ? generateSuggestions(message.content) : undefined;
 
