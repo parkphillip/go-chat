@@ -527,15 +527,16 @@ export function Chat() {
           {!messages.length && !isThinking ? (
             <div className="flex-1 flex items-center justify-center p-8">
               <div className="text-center max-w-2xl w-full">
-                {/* William Go headshot with polished styling */}
-                <div className="mb-8">
+                {/* William Go faded headshot floating above title */}
+                <div className="mb-6 relative">
                   <img 
                     src="/lovable-uploads/f78f4ebf-b392-4cdc-9f00-5b4619ef6205.png" 
                     alt="William Go, Irvine City Councilmember District 2"
-                    className="w-28 h-28 mx-auto object-cover rounded-full shadow-xl ring-4 ring-primary/10 hover:ring-primary/20 transition-all duration-300"
+                    className="w-48 h-auto mx-auto object-cover opacity-20 grayscale hover:opacity-30 transition-opacity duration-500"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background"></div>
                 </div>
-                <h1 className="text-4xl font-medium text-foreground mb-2">
+                <h1 className="text-4xl font-medium text-foreground mb-2 relative z-10">
                   Chat with William Go
                 </h1>
                 <p className="text-xl text-muted-foreground mb-8">
