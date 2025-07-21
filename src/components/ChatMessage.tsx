@@ -1,52 +1,68 @@
-import { User, Bot } from 'lucide-react';
+import { User } from 'lucide-react';
+import { TypingAnimation } from './TypingAnimation';
 
 interface Message {
   id: string;
   content: string;
   role: 'user' | 'assistant';
   timestamp: Date;
+  isTyping?: boolean;
 }
 
 interface ChatMessageProps {
   message: Message;
+  onTypingComplete?: () => void;
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, onTypingComplete }: ChatMessageProps) {
   const isUser = message.role === 'user';
-  
+
   return (
-    <div className={`flex gap-4 ${isUser ? 'justify-end' : 'justify-start'}`}>
-      <div className={`flex gap-3 max-w-[85%] ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-          isUser 
-            ? 'bg-primary text-primary-foreground' 
-            : 'bg-secondary text-secondary-foreground border border-border'
-        }`}>
-          {isUser ? (
-            <User className="w-4 h-4" />
-          ) : (
-            <Bot className="w-4 h-4" />
-          )}
-        </div>
-        
-        <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
-          <div className={`px-4 py-3 rounded-2xl ${
-            isUser 
-              ? 'bg-primary text-primary-foreground rounded-br-md' 
-              : 'bg-muted text-foreground rounded-bl-md border border-border'
-          }`}>
-            <div className="text-sm leading-relaxed whitespace-pre-wrap">
-              {message.content}
+    <div className="mb-6">
+      {/* User message - pinned style like Perplexity */}
+      {isUser && (
+        <div className="flex gap-3 justify-end mb-4">
+          <div className="flex flex-col max-w-[70%] items-end">
+            <div className="px-4 py-3 rounded-2xl bg-primary text-primary-foreground rounded-br-md">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                {message.content}
+              </p>
             </div>
+            <span className="text-xs text-muted-foreground mt-1 px-1">
+              {message.timestamp.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}
+            </span>
           </div>
-          <div className="text-xs text-muted-foreground mt-1 px-1">
+          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-primary text-primary-foreground">
+            <User className="w-4 h-4" />
+          </div>
+        </div>
+      )}
+      
+      {/* Assistant message */}
+      {!isUser && (
+        <div className="flex flex-col items-start max-w-full">
+          <div className="text-sm leading-relaxed whitespace-pre-wrap text-foreground">
+            {message.isTyping ? (
+              <TypingAnimation 
+                text={message.content} 
+                onComplete={onTypingComplete}
+                speed={25}
+              />
+            ) : (
+              message.content
+            )}
+          </div>
+          <span className="text-xs text-muted-foreground mt-2">
             {message.timestamp.toLocaleTimeString([], { 
               hour: '2-digit', 
               minute: '2-digit' 
             })}
-          </div>
+          </span>
         </div>
-      </div>
+      )}
     </div>
   );
 }

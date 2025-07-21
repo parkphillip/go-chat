@@ -14,6 +14,7 @@ interface Message {
   content: string;
   role: 'user' | 'assistant';
   timestamp: Date;
+  isTyping?: boolean;
 }
 
 interface ChatData {
@@ -23,9 +24,9 @@ interface ChatData {
   lastModified: Date;
 }
 
-const WILLIAM_GO_CONTEXT = `You are an AI assistant specifically designed for William Go, Irvine City Councilmember for District 2. You have access to comprehensive information about his background, priorities, and current district initiatives.
+const WILLIAM_GO_CONTEXT = `You are William Go, Irvine City Councilmember for District 2. You are speaking directly to constituents and students.
 
-William Go Background:
+Your Background:
 - First Chinese-Filipino American on Irvine City Council, elected November 2024
 - First to represent District 2
 - Immigrant from Philippines, first-generation college graduate
@@ -36,7 +37,7 @@ William Go Background:
 - Ironman triathlete, cyclist, long-distance runner
 - 20+ year Irvine resident in Great Park neighborhood
 
-District 2 Priorities:
+Your District 2 Priorities:
 - Great Park development and optimization
 - Protected bike lanes and cycling infrastructure
 - Expanded Irvine Connect shuttle service
@@ -45,7 +46,7 @@ District 2 Priorities:
 - Safe neighborhoods and public safety
 - Student and youth engagement
 
-When responding, always speak as William Go's dedicated AI assistant, referencing his specific experience and priorities. Be conversational, knowledgeable, and focused on how his background informs solutions for District 2 residents.`;
+Always speak as William Go directly - use "I" statements, reference your personal experience, and connect your background to how you're working for District 2 residents. Be conversational, personal, and solution-oriented.`;
 
 const ragMessages = [
   "Analyzing student concerns across District 2...",
@@ -121,13 +122,64 @@ export function Chat() {
     ));
   };
 
-  const simulateRAGThinking = async () => {
-    const randomMessage = ragMessages[Math.floor(Math.random() * ragMessages.length)];
-    setThinkingMessage(randomMessage);
-    setIsThinking(true);
+  const shouldShowReasoning = (query: string) => {
+    // Check if query is meaningful (not gibberish)
+    const meaningfulWords = [
+      'william', 'go', 'district', 'great', 'park', 'housing', 'transportation', 
+      'bike', 'lanes', 'irvine', 'council', 'policy', 'what', 'how', 'why', 
+      'when', 'where', 'goals', 'priorities', 'plans', 'student', 'youth'
+    ];
     
-    // Simulate thinking time between 1.5-3 seconds
-    await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1500));
+    const queryWords = query.toLowerCase().split(' ');
+    const hasValidWords = queryWords.some(word => 
+      word.length > 2 && (meaningfulWords.includes(word) || /^[a-z]+$/.test(word))
+    );
+    
+    return hasValidWords && query.trim().length > 5;
+  };
+
+  const getRelevantReasoningSteps = (query: string) => {
+    const lowerQuery = query.toLowerCase();
+    const steps = [];
+    
+    if (lowerQuery.includes('william') || lowerQuery.includes('background') || lowerQuery.includes('experience')) {
+      steps.push("Searching William Go's background...");
+    }
+    if (lowerQuery.includes('great park') || lowerQuery.includes('development')) {
+      steps.push("Analyzing Great Park development plans...");
+    }
+    if (lowerQuery.includes('housing') || lowerQuery.includes('affordable')) {
+      steps.push("Retrieving housing policy positions...");
+    }
+    if (lowerQuery.includes('transportation') || lowerQuery.includes('bike') || lowerQuery.includes('transit')) {
+      steps.push("Accessing transportation initiatives...");
+    }
+    if (lowerQuery.includes('student') || lowerQuery.includes('youth') || lowerQuery.includes('education')) {
+      steps.push("Analyzing student concerns across District 2...");
+    }
+    if (lowerQuery.includes('goal') || lowerQuery.includes('priority') || lowerQuery.includes('plan')) {
+      steps.push("Reviewing William Go's policy positions...");
+    }
+    
+    // Default steps if none match
+    if (steps.length === 0) {
+      steps.push("Gathering District 2 updates...");
+      steps.push("Connecting to Irvine community data...");
+    }
+    
+    return steps;
+  };
+
+  const simulateRAGThinking = async (query: string) => {
+    const relevantSteps = getRelevantReasoningSteps(query);
+    
+    for (const step of relevantSteps) {
+      setThinkingMessage(step);
+      setIsThinking(true);
+      
+      // Each step takes 1-2 seconds
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+    }
     
     setIsThinking(false);
   };
@@ -169,10 +221,13 @@ export function Chat() {
       updateChatTitle(chatId, input);
     }
 
+    const userInput = input;
     setInput('');
     
-    // Simulate RAG thinking
-    await simulateRAGThinking();
+    // Conditionally simulate RAG thinking
+    if (shouldShowReasoning(userInput)) {
+      await simulateRAGThinking(userInput);
+    }
 
     try {
       const openai = new OpenAI({
@@ -184,7 +239,7 @@ export function Chat() {
         model: 'gpt-4',
         messages: [
           { role: 'system', content: WILLIAM_GO_CONTEXT },
-          { role: 'user', content: input }
+          { role: 'user', content: userInput }
         ],
         max_tokens: 500,
         temperature: 0.7
@@ -194,7 +249,8 @@ export function Chat() {
         id: (Date.now() + 1).toString(),
         content: response.choices[0]?.message?.content || 'I apologize, I encountered an issue generating a response.',
         role: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
+        isTyping: true
       };
 
       addMessage(chatId, assistantMessage);
@@ -204,7 +260,8 @@ export function Chat() {
         id: (Date.now() + 1).toString(),
         content: 'I apologize, I encountered a technical issue. Please check your API key and try again.',
         role: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
+        isTyping: true
       };
       addMessage(chatId, errorMessage);
     }
@@ -289,7 +346,25 @@ export function Chat() {
             <ScrollArea className="flex-1 p-4">
               <div className="max-w-3xl mx-auto space-y-6 py-4">
                 {currentChat?.messages.map((message) => (
-                  <ChatMessage key={message.id} message={message} />
+                  <ChatMessage 
+                    key={message.id} 
+                    message={message}
+                    onTypingComplete={() => {
+                      // Update message to stop typing animation
+                      setChats(prev => prev.map(chat => 
+                        chat.id === currentChatId 
+                          ? {
+                              ...chat,
+                              messages: chat.messages.map(msg =>
+                                msg.id === message.id 
+                                  ? { ...msg, isTyping: false }
+                                  : msg
+                              )
+                            }
+                          : chat
+                      ));
+                    }}
+                  />
                 ))}
                 {isThinking && (
                   <ThinkingAnimation message={thinkingMessage} />
