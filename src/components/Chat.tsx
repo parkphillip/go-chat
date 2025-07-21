@@ -405,9 +405,41 @@ export function Chat() {
     return steps;
   };
 
+  const getComplexityTiming = (query: string) => {
+    const lowerQuery = query.toLowerCase().trim();
+    
+    // Simple greetings and basic responses - very fast
+    const simpleResponses = [
+      'hello', 'hi', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no',
+      'good morning', 'good afternoon', 'good evening', 'bye', 'goodbye'
+    ];
+    
+    if (simpleResponses.some(phrase => lowerQuery === phrase || lowerQuery.startsWith(phrase + ' '))) {
+      return { baseTime: 300, randomTime: 200 }; // 300-500ms per step
+    }
+    
+    // Short questions - quick
+    if (lowerQuery.length < 20) {
+      return { baseTime: 600, randomTime: 300 }; // 600-900ms per step
+    }
+    
+    // Comprehensive questions - longer processing
+    const isComprehensive = ['comprehensive', 'detailed', 'overview', 'all your', 'tell me about'].some(phrase => 
+      lowerQuery.includes(phrase)
+    );
+    
+    if (isComprehensive) {
+      return { baseTime: 1800, randomTime: 700 }; // 1.8-2.5s per step
+    }
+    
+    // Default for moderate questions
+    return { baseTime: 1000, randomTime: 500 }; // 1.0-1.5s per step
+  };
+
   const simulateRAGThinking = async (query: string) => {
     const relevantSteps = getRelevantReasoningSteps(query);
-    console.log('Starting RAG thinking with steps:', relevantSteps);
+    const timing = getComplexityTiming(query);
+    console.log('Starting RAG thinking with steps:', relevantSteps, 'timing:', timing);
     
     for (let i = 0; i < relevantSteps.length; i++) {
       const step = relevantSteps[i];
@@ -415,8 +447,8 @@ export function Chat() {
       setThinkingMessage(step);
       setIsThinking(true);
       
-      // Each step takes 1.2-1.8s for optimal thinking time
-      await new Promise(resolve => setTimeout(resolve, 1200 + Math.random() * 600));
+      // Variable timing based on complexity
+      await new Promise(resolve => setTimeout(resolve, timing.baseTime + Math.random() * timing.randomTime));
     }
     
     console.log('RAG thinking completed');
@@ -466,10 +498,11 @@ export function Chat() {
       await simulateRAGThinking(userInput);
     } else {
       console.log('Skipping reasoning for simple query:', userInput);
-      // For simple queries, show a brief thinking state
+      // For simple queries, show a brief thinking state with variable timing
+      const timing = getComplexityTiming(userInput);
       setThinkingMessage('Processing your question...');
       setIsThinking(true);
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, timing.baseTime));
     }
 
     try {
