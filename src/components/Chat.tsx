@@ -664,7 +664,7 @@ export function Chat() {
           {/* Enhanced input form for ongoing chat - only show when there are messages */}
           {messages.length > 0 && (
             <div className="p-6">
-              <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+              <form onSubmit={handleSubmit} className="max-w-5xl mx-auto">
                 <div className="relative">
                   <Input
                     value={input}
