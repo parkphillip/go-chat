@@ -80,12 +80,21 @@ export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, isOpen,
       </ScrollArea>
       
       <div className="p-4 border-t border-border">
-        <div className="text-xs text-muted-foreground">
-          <div className="font-medium mb-1">William Go</div>
-          <div className="mb-3">Irvine City Council • District 2</div>
-          <div className="text-xs text-muted-foreground/70">
-            Powered by Candid
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <img 
+              src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
+              alt="William Go"
+              className="w-full h-full object-cover brightness-[1.15] contrast-[1.1] saturate-[1.05]"
+            />
           </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-medium text-sm text-foreground">William Go</div>
+            <div className="text-xs text-muted-foreground">Irvine City Council • District 2</div>
+          </div>
+        </div>
+        <div className="text-xs text-muted-foreground/70">
+          Powered by Candid
         </div>
       </div>
     </div>

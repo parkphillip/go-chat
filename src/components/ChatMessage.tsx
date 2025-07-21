@@ -1,6 +1,8 @@
+
 import { User } from 'lucide-react';
 import { TypingAnimation } from './TypingAnimation';
 import { QuestionSuggestions } from './QuestionSuggestions';
+import { EscalationPrompt } from './EscalationPrompt';
 
 interface Message {
   id: string;
@@ -8,6 +10,7 @@ interface Message {
   role: 'user' | 'assistant';
   timestamp: Date;
   isTyping?: boolean;
+  needsEscalation?: boolean;
 }
 
 interface ChatMessageProps {
@@ -15,9 +18,10 @@ interface ChatMessageProps {
   onTypingComplete?: () => void;
   suggestions?: string[];
   onSuggestionClick?: (suggestion: string) => void;
+  onEscalate?: (question: string, context: string) => void;
 }
 
-export function ChatMessage({ message, onTypingComplete, suggestions, onSuggestionClick }: ChatMessageProps) {
+export function ChatMessage({ message, onTypingComplete, suggestions, onSuggestionClick, onEscalate }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   return (
@@ -43,7 +47,7 @@ export function ChatMessage({ message, onTypingComplete, suggestions, onSuggesti
               <img 
                 src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
                 alt="William Go"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover brightness-[1.15] contrast-[1.1] saturate-[1.05]"
               />
             </div>
             <div className="flex flex-col max-w-[75%] items-start">
@@ -63,8 +67,13 @@ export function ChatMessage({ message, onTypingComplete, suggestions, onSuggesti
             </div>
           </div>
           
+          {/* Show escalation prompt if needed */}
+          {!message.isTyping && message.needsEscalation && onEscalate && (
+            <EscalationPrompt onEscalate={onEscalate} />
+          )}
+          
           {/* Show suggestions only for assistant messages that are not typing and have suggestions */}
-          {!message.isTyping && suggestions && suggestions.length > 0 && onSuggestionClick && (
+          {!message.isTyping && suggestions && suggestions.length > 0 && onSuggestionClick && !message.needsEscalation && (
             <QuestionSuggestions 
               suggestions={suggestions} 
               onSuggestionClick={onSuggestionClick}

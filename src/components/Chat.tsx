@@ -8,6 +8,7 @@ import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
 import { ApiKeyModal } from './ApiKeyModal';
 import { useTypingAnimation } from '@/hooks/use-typing-animation';
+import { useEscalationDetection } from '@/hooks/use-escalation-detection';
 import OpenAI from 'openai';
 
 interface Message {
@@ -16,6 +17,7 @@ interface Message {
   role: 'user' | 'assistant';
   timestamp: Date;
   isTyping?: boolean;
+  needsEscalation?: boolean;
 }
 
 interface ChatData {
@@ -89,6 +91,8 @@ export function Chat() {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [isProcessingResponse, setIsProcessingResponse] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const { updateDetection } = useEscalationDetection();
 
   // Typing animation for placeholder (only for new chat)
   const typingText = useTypingAnimation({
@@ -178,6 +182,12 @@ export function Chat() {
     // handleSubmit could be called here with the suggestion
   };
 
+  const handleEscalate = (question: string, context: string) => {
+    console.log('Escalating to team:', { question, context });
+    // Placeholder for future Supabase integration
+    console.log('Question forwarded to William Go\'s team');
+  };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages, isThinking]);
@@ -247,7 +257,21 @@ export function Chat() {
       ));
     } else {
       // Add to current conversation
-      setCurrentMessages(prev => [...prev, message]);
+      setCurrentMessages(prev => {
+        const newMessages = [...prev, message];
+        
+        // Check for escalation after assistant responds
+        if (message.role === 'assistant' && !message.isTyping) {
+          const shouldEscalate = updateDetection(newMessages);
+          if (shouldEscalate) {
+            // Update the message to include escalation flag
+            const updatedMessage = { ...message, needsEscalation: true };
+            return [...prev, updatedMessage];
+          }
+        }
+        
+        return newMessages;
+      });
     }
   };
 
@@ -522,7 +546,7 @@ export function Chat() {
                   <img 
                     src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
                     alt="William Go, Irvine City Councilmember District 2"
-                    className="w-52 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500"
+                    className="w-52 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500 brightness-[1.15] contrast-[1.1] saturate-[1.05]"
                   />
                   {/* Simple, clean fade without lines */}
                   <div 
@@ -535,7 +559,7 @@ export function Chat() {
                 <h1 className="text-4xl font-medium text-foreground mb-3 relative z-10">
                   Chat with William Go
                 </h1>
-                <p className="text-lg text-muted-foreground mb-8">
+                <p className="text-base text-muted-foreground mb-6">
                   Irvine Councilmember District 2
                 </p>
                 
@@ -614,10 +638,11 @@ export function Chat() {
                   const isLatestMessage = index === messages.length - 1;
                   const hasQuestions = message.content.includes('?');
                   
-                  // Show suggestions for most assistant responses, but not if response already has questions
+                  // Show suggestions for most assistant responses, but not if response already has questions or needs escalation
                   const shouldShowSuggestions = isAssistantMessage && 
                     isLatestMessage && 
-                    !hasQuestions;
+                    !hasQuestions &&
+                    !message.needsEscalation;
                   
                   const suggestions = shouldShowSuggestions ? generateSuggestions(message.content, messages) : undefined;
 
@@ -627,6 +652,7 @@ export function Chat() {
                       message={message}
                       suggestions={suggestions}
                       onSuggestionClick={handleSuggestionClick}
+                      onEscalate={handleEscalate}
                       onTypingComplete={() => {
                         // Update message to stop typing animation
                         if (currentChat) {
