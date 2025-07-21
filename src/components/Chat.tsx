@@ -26,6 +26,7 @@ interface ChatData {
   messages: Message[];
   lastModified: Date;
   archived?: boolean;
+  escalationSent?: boolean;
 }
 
 const WILLIAM_GO_CONTEXT = `You are William Go, Irvine City Councilmember for District 2. You are speaking directly to constituents and students.
@@ -183,8 +184,16 @@ export function Chat() {
     // handleSubmit could be called here with the suggestion
   };
 
-  const handleEscalate = (question: string, context: string) => {
-    console.log('Escalating to team:', { question, context });
+  const handleEscalation = (question: string, context: string) => {
+    // Mark escalation as sent for current chat
+    if (currentChatId) {
+      setChats(prev => prev.map(chat => 
+        chat.id === currentChatId 
+          ? { ...chat, escalationSent: true }
+          : chat
+      ));
+    }
+    
     // Placeholder for future Supabase integration
     console.log('Question forwarded to William Go\'s team');
   };
@@ -564,11 +573,11 @@ export function Chat() {
       addMessage(chatId, assistantMessage);
 
       // Save chat to history after first assistant response if not already saved
-      if (!currentChat && messages.length === 1) {
+      if (!currentChat && messages.length >= 1) {
         const chatToSave: ChatData = {
           id: chatId,
           title: messages[0]?.content.slice(0, 30) + (messages[0]?.content.length > 30 ? '...' : '') || 'New Chat',
-          messages: [messages[0], assistantMessage],
+          messages: [...messages, assistantMessage],
           lastModified: new Date()
         };
         setChats(prev => [chatToSave, ...prev]);
@@ -756,12 +765,13 @@ export function Chat() {
                   const suggestions = shouldShowSuggestions ? generateSuggestions(message.content, messages) : undefined;
 
                   return (
-                    <ChatMessage 
-                      key={message.id} 
-                      message={message}
-                      suggestions={suggestions}
-                      onSuggestionClick={handleSuggestionClick}
-                      onEscalate={handleEscalate}
+                     <ChatMessage 
+                       key={message.id} 
+                       message={message}
+                       suggestions={suggestions}
+                       onSuggestionClick={handleSuggestionClick}
+                       onEscalate={handleEscalation}
+                       escalationSent={currentChat?.escalationSent || false}
                       onTypingComplete={() => {
                         // Update message to stop typing animation
                         if (currentChat) {

@@ -22,6 +22,7 @@ interface ChatData {
   messages: Message[];
   lastModified: Date;
   archived?: boolean;
+  escalationSent?: boolean;
 }
 
 interface SidebarProps {

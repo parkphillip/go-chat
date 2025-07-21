@@ -19,9 +19,10 @@ interface ChatMessageProps {
   suggestions?: string[];
   onSuggestionClick?: (suggestion: string) => void;
   onEscalate?: (question: string, context: string) => void;
+  escalationSent?: boolean;
 }
 
-export function ChatMessage({ message, onTypingComplete, suggestions, onSuggestionClick, onEscalate }: ChatMessageProps) {
+export function ChatMessage({ message, onTypingComplete, suggestions, onSuggestionClick, onEscalate, escalationSent = false }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   return (
@@ -69,7 +70,7 @@ export function ChatMessage({ message, onTypingComplete, suggestions, onSuggesti
           
           {/* Show escalation prompt if needed */}
           {!message.isTyping && message.needsEscalation && onEscalate && (
-            <EscalationPrompt onEscalate={onEscalate} />
+            <EscalationPrompt onEscalate={onEscalate} isSent={escalationSent} />
           )}
           
           {/* Show suggestions only for assistant messages that are not typing and have suggestions */}

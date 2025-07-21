@@ -4,11 +4,11 @@ import { EscalationModal } from './EscalationModal';
 
 interface EscalationPromptProps {
   onEscalate: (question: string, context: string) => void;
+  isSent: boolean;
 }
 
-export function EscalationPrompt({ onEscalate }: EscalationPromptProps) {
+export function EscalationPrompt({ onEscalate, isSent }: EscalationPromptProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSent, setIsSent] = useState(false);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -21,7 +21,6 @@ export function EscalationPrompt({ onEscalate }: EscalationPromptProps) {
   const handleSubmitEscalation = (question: string, context: string) => {
     onEscalate(question, context);
     setIsModalOpen(false);
-    setIsSent(true);
   };
 
   return (
