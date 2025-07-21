@@ -670,7 +670,7 @@ export function Chat() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={apiKey ? "Ask William Go anything..." : "Please set your OpenAI API key first"}
-                    className="w-full pl-6 pr-16 py-7 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                    className="w-full pl-20 pr-16 py-7 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                     disabled={isThinking || isProcessingResponse || !apiKey}
                   />
                   
