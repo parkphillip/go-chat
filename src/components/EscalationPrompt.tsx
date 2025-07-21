@@ -32,7 +32,7 @@ export function EscalationPrompt({ onEscalate, isSent }: EscalationPromptProps) 
             <div className="flex items-center gap-3">
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground">
-                  Need more specific information? Send this question directly to William Go's team.
+                  Need more info? Send this question directly to council member Go's team.
                 </p>
               </div>
               <button
