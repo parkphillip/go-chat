@@ -28,12 +28,6 @@ export function ChatMessage({ message, onTypingComplete }: ChatMessageProps) {
                 {message.content}
               </p>
             </div>
-            <span className="text-xs text-muted-foreground mt-1 px-1">
-              {message.timestamp.toLocaleTimeString([], { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              })}
-            </span>
           </div>
           <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-primary text-primary-foreground">
             <User className="w-4 h-4" />
@@ -61,12 +55,6 @@ export function ChatMessage({ message, onTypingComplete }: ChatMessageProps) {
                 )}
               </div>
             </div>
-            <span className="text-xs text-muted-foreground mt-1 px-1">
-              {message.timestamp.toLocaleTimeString([], { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              })}
-            </span>
           </div>
         </div>
       )}

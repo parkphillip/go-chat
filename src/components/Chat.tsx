@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Plus, MessageSquare, Settings } from 'lucide-react';
+import { Send, Edit3, MessageSquare, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -350,7 +350,7 @@ export function Chat() {
   }, []);
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background font-berkeley">
       <ApiKeyModal
         isOpen={showApiKeyModal}
         onSave={(key) => {

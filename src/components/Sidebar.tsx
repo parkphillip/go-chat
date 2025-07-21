@@ -1,4 +1,4 @@
-import { Plus, MessageSquare, X, Settings } from 'lucide-react';
+import { Edit3, MessageSquare, X, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -47,7 +47,7 @@ export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, isOpen,
           onClick={onNewChat}
           className="w-full justify-start gap-2 h-10 bg-primary hover:bg-primary/90 text-primary-foreground"
         >
-          <Plus className="h-4 w-4" />
+          <Edit3 className="h-4 w-4" />
           New Chat
         </Button>
       </div>
