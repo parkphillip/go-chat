@@ -398,17 +398,39 @@ export function Chat() {
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
           {!messages.length && !isThinking ? (
             <div className="flex-1 flex items-center justify-center p-8">
-              <div className="text-center max-w-2xl">
+              <div className="text-center max-w-2xl w-full">
                 <h1 className="text-4xl font-medium text-foreground mb-2">
                   Chat with William Go
                 </h1>
-                <p className="text-xl text-muted-foreground">
+                <p className="text-xl text-muted-foreground mb-8">
                   Irvine Councilmember District 2
                 </p>
+                
+                {/* Input form for new chat page */}
+                <form onSubmit={handleSubmit} className="max-w-xl mx-auto mb-6">
+                  <div className="relative">
+                    <Input
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
+                      className="w-full pl-4 pr-12 py-4 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                      disabled={isThinking || isProcessingResponse || !apiKey}
+                    />
+                    <Button
+                      type="submit"
+                      size="icon"
+                      disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </form>
+                
                 {!apiKey && (
                   <Button 
                     onClick={() => setShowApiKeyModal(true)}
-                    className="mt-8"
+                    className="mt-4"
                   >
                     <Settings className="w-4 h-4 mr-2" />
                     Set OpenAI API Key
@@ -458,27 +480,31 @@ export function Chat() {
             </ScrollArea>
           )}
           
-          <div className="p-6">
-            <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-              <div className="relative">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
-                  className="w-full pl-4 pr-12 py-4 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
-                  disabled={isThinking || isProcessingResponse || !apiKey}
-                />
-                <Button
-                  type="submit"
-                  size="icon"
-                  disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </form>
-          </div>
+          
+          {/* Input form for ongoing chat - only show when there are messages */}
+          {messages.length > 0 && (
+            <div className="p-6">
+              <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+                <div className="relative">
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
+                    className="w-full pl-4 pr-12 py-4 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                    disabled={isThinking || isProcessingResponse || !apiKey}
+                  />
+                  <Button
+                    type="submit"
+                    size="icon"
+                    disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </div>
