@@ -111,13 +111,13 @@ export function EscalationModal({ isOpen, onClose, onSubmit }: EscalationModalPr
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin" />
-                  Sending...
+                  <div className="w-3 h-3 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin" />
+                  <span className="text-xs">Sending...</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <Send className="h-3 w-3" />
-                  Send Question
+                  <span className="text-xs">Send Question</span>
                 </div>
               )}
             </Button>

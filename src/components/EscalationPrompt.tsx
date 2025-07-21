@@ -8,6 +8,7 @@ interface EscalationPromptProps {
 
 export function EscalationPrompt({ onEscalate }: EscalationPromptProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSent, setIsSent] = useState(false);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -20,6 +21,7 @@ export function EscalationPrompt({ onEscalate }: EscalationPromptProps) {
   const handleSubmitEscalation = (question: string, context: string) => {
     onEscalate(question, context);
     setIsModalOpen(false);
+    setIsSent(true);
   };
 
   return (
@@ -36,9 +38,14 @@ export function EscalationPrompt({ onEscalate }: EscalationPromptProps) {
               </div>
               <button
                 onClick={handleOpenModal}
-                className="px-3 py-1.5 text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors border border-primary/20"
+                disabled={isSent}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors border ${
+                  isSent 
+                    ? 'bg-green-500/10 text-green-600 border-green-500/20 cursor-default' 
+                    : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'
+                }`}
               >
-                Contact Team
+                {isSent ? 'Sent' : 'Contact Team'}
               </button>
             </div>
           </div>
