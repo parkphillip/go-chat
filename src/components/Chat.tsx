@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Send, Plus, MessageSquare, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -196,16 +197,19 @@ export function Chat() {
 
   const simulateRAGThinking = async (query: string) => {
     const relevantSteps = getRelevantReasoningSteps(query);
+    console.log('Starting RAG thinking with steps:', relevantSteps);
     
-    for (const step of relevantSteps) {
+    for (let i = 0; i < relevantSteps.length; i++) {
+      const step = relevantSteps[i];
+      console.log('Setting thinking message:', step);
       setThinkingMessage(step);
       setIsThinking(true);
       
-      // Each step takes 800ms-1.2s (faster)
-      await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
+      // Each step takes 1-1.5s
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 500));
     }
     
-    // Don't stop thinking here - let the response handle it
+    console.log('RAG thinking completed');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -249,9 +253,20 @@ export function Chat() {
     setInput('');
     setIsProcessingResponse(true);
     
+    // Initialize thinking state
+    setIsThinking(false);
+    setThinkingMessage('');
+    
     // Conditionally simulate RAG thinking
     if (shouldShowReasoning(userInput)) {
+      console.log('Should show reasoning for query:', userInput);
       await simulateRAGThinking(userInput);
+    } else {
+      console.log('Skipping reasoning for simple query:', userInput);
+      // For simple queries, show a brief thinking state
+      setThinkingMessage('Processing your question...');
+      setIsThinking(true);
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     try {
@@ -260,8 +275,10 @@ export function Chat() {
         dangerouslyAllowBrowser: true
       });
 
+      console.log('Starting OpenAI request...');
+
       const response = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4.1-2025-04-14',
         messages: [
           { role: 'system', content: WILLIAM_GO_CONTEXT },
           { role: 'user', content: userInput }
@@ -269,6 +286,8 @@ export function Chat() {
         max_tokens: getTokenLimit(userInput),
         temperature: 0.7
       });
+
+      console.log('OpenAI response received');
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -279,7 +298,9 @@ export function Chat() {
       };
 
       // Transition from thinking to typing
+      console.log('Transitioning from thinking to typing');
       setIsThinking(false);
+      setThinkingMessage('');
       setIsProcessingResponse(false);
       addMessage(chatId, assistantMessage);
     } catch (error) {
@@ -292,6 +313,7 @@ export function Chat() {
         isTyping: true
       };
       setIsThinking(false);
+      setThinkingMessage('');
       setIsProcessingResponse(false);
       addMessage(chatId, errorMessage);
     }
@@ -396,7 +418,7 @@ export function Chat() {
                     }}
                   />
                 ))}
-                {(isThinking || isProcessingResponse) && (
+                {(isThinking || isProcessingResponse) && thinkingMessage && (
                   <div>
                     <ThinkingAnimation message={thinkingMessage} />
                   </div>
