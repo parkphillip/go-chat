@@ -515,7 +515,7 @@ export function Chat() {
         
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
           {!messages.length && !isThinking ? (
-            <div className="flex-1 flex items-center justify-center p-8">
+            <div className="flex-1 flex items-center justify-center pb-12 pt-4 px-8">
               <div className="text-center max-w-2xl w-full">
                 {/* William Go faded headshot floating above title - scaled up 15% */}
                 <div className="mb-6 relative overflow-hidden">
@@ -535,7 +535,7 @@ export function Chat() {
                 <h1 className="text-4xl font-medium text-foreground mb-3 relative z-10">
                   Chat with William Go
                 </h1>
-                <p className="text-xl text-muted-foreground mb-9">
+                <p className="text-lg text-muted-foreground mb-8">
                   Irvine Councilmember District 2
                 </p>
                 
@@ -556,19 +556,19 @@ export function Chat() {
                         type="button"
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
                         onClick={() => console.log('Attach file')}
                       >
-                        <Paperclip className="h-4 w-4" />
+                        <Paperclip className="h-5 w-5" />
                       </Button>
                       <Button
                         type="button"
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
                         onClick={() => console.log('Image upload')}
                       >
-                        <Image className="h-4 w-4" />
+                        <Image className="h-5 w-5" />
                       </Button>
                     </div>
                     
@@ -578,10 +578,10 @@ export function Chat() {
                         type="button"
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
                         onClick={() => console.log('Voice input')}
                       >
-                        <Mic className="h-4 w-4" />
+                        <Mic className="h-5 w-5" />
                       </Button>
                        <Button
                          type="submit"
@@ -677,38 +677,38 @@ export function Chat() {
                     disabled={isThinking || isProcessingResponse || !apiKey}
                   />
                   
-                  {/* Bottom icons row - 2 left, 1 right */}
-                  <div className="absolute bottom-4 left-6 flex gap-2">
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                      onClick={() => console.log('Attach file')}
-                    >
-                      <Paperclip className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                      onClick={() => console.log('Image upload')}
-                    >
-                      <Image className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
+                   {/* Bottom icons row - 2 left, 1 right */}
+                   <div className="absolute bottom-4 left-6 flex gap-2">
+                     <Button
+                       type="button"
+                       size="icon"
+                       variant="ghost"
+                       className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                       onClick={() => console.log('Attach file')}
+                     >
+                       <Paperclip className="h-5 w-5" />
+                     </Button>
+                     <Button
+                       type="button"
+                       size="icon"
+                       variant="ghost"
+                       className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                       onClick={() => console.log('Image upload')}
+                     >
+                       <Image className="h-5 w-5" />
+                     </Button>
+                   </div>
+                   
                    {/* Right icons - Mic and Send */}
                    <div className="absolute bottom-4 right-6 flex gap-2">
                      <Button
                        type="button"
                        size="icon"
                        variant="ghost"
-                       className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                       className="h-8 w-8 text-muted-foreground hover:text-foreground"
                        onClick={() => console.log('Voice input')}
                      >
-                       <Mic className="h-4 w-4" />
+                       <Mic className="h-5 w-5" />
                      </Button>
                      <Button
                        type="submit"
