@@ -31,9 +31,21 @@ export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, isOpen,
 
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-muted/30 border-r border-border flex flex-col z-10">
+      {/* Candid header */}
+      <div className="p-4 border-b border-border">
+        <Button
+          onClick={onNewChat}
+          variant="ghost"
+          className="w-full justify-start text-lg font-semibold text-foreground hover:bg-transparent p-0 h-auto"
+        >
+          Candid
+        </Button>
+      </div>
+
+      {/* Chats section */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-foreground">Chat History</h2>
+          <h2 className="font-semibold text-foreground">Chats</h2>
           <Button
             variant="ghost"
             size="icon"
