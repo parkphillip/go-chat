@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Edit3, MessageSquare, Paperclip, Mic, Image } from 'lucide-react';
+import { Send, Edit3, MessageSquare, Paperclip, Mic, Image, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -595,8 +595,20 @@ export function Chat() {
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
       
+      {/* Floating sidebar trigger - only visible when sidebar is closed and there are messages */}
+      {!sidebarOpen && messages.length > 0 && (
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setSidebarOpen(true)}
+          className="fixed left-4 top-4 z-20 h-10 w-10 bg-background border-2 shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          <PanelLeft className="h-4 w-4" />
+        </Button>
+      )}
+      
       <div className={`flex-1 flex flex-col ${sidebarOpen ? 'ml-64' : 'ml-0'} transition-all duration-200`}>
-        {!sidebarOpen && (
+        {!sidebarOpen && !messages.length && (
           <div className="p-4 border-b border-border flex justify-between items-center">
             <Button
               variant="ghost"
