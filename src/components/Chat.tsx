@@ -572,8 +572,8 @@ export function Chat() {
                       </Button>
                     </div>
                     
-                    {/* Mic icon on the right */}
-                    <div className="absolute bottom-4 right-16 flex gap-2">
+                    {/* Right icons - Mic and Send */}
+                    <div className="absolute bottom-4 right-6 flex gap-2">
                       <Button
                         type="button"
                         size="icon"
@@ -583,16 +583,15 @@ export function Chat() {
                       >
                         <Mic className="h-4 w-4" />
                       </Button>
+                      <Button
+                        type="submit"
+                        size="icon"
+                        disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
+                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
                     </div>
-                    
-                    <Button
-                      type="submit"
-                      size="icon"
-                      disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
                   </div>
                 </form>
                 
@@ -700,27 +699,26 @@ export function Chat() {
                     </Button>
                   </div>
                   
-                  {/* Mic icon on the right */}
-                  <div className="absolute bottom-4 right-16 flex gap-2">
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                      onClick={() => console.log('Voice input')}
-                    >
-                      <Mic className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  <Button
-                    type="submit"
-                    size="icon"
-                    disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
+                   {/* Right icons - Mic and Send */}
+                   <div className="absolute bottom-4 right-6 flex gap-2">
+                     <Button
+                       type="button"
+                       size="icon"
+                       variant="ghost"
+                       className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                       onClick={() => console.log('Voice input')}
+                     >
+                       <Mic className="h-4 w-4" />
+                     </Button>
+                     <Button
+                       type="submit"
+                       size="icon"
+                       disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
+                       className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                     >
+                       <Send className="h-4 w-4" />
+                     </Button>
+                   </div>
                 </div>
               </form>
             </div>
