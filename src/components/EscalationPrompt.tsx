@@ -1,26 +1,55 @@
 
-import { EscalationButton } from './EscalationButton';
+import { useState } from 'react';
+import { EscalationModal } from './EscalationModal';
 
 interface EscalationPromptProps {
   onEscalate: (question: string, context: string) => void;
 }
 
 export function EscalationPrompt({ onEscalate }: EscalationPromptProps) {
-  const handleEscalate = () => {
-    // For now, we'll pass placeholder data
-    onEscalate("User question requiring team attention", "Conversation context");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmitEscalation = (question: string, context: string) => {
+    onEscalate(question, context);
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="ml-11 mb-4 animate-fade-in">
-      <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 border border-border/50">
-        <div className="flex-1">
-          <p className="text-sm text-muted-foreground">
-            Need more specific information? Send this question directly to William Go's team.
-          </p>
+    <>
+      <div className="flex gap-3 mb-4">
+        <div className="flex-shrink-0 w-8 h-8"></div>
+        <div className="flex flex-col max-w-[75%] items-start">
+          <div className="px-4 py-3 rounded-2xl bg-muted/30 border border-border/50 rounded-bl-md">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">
+                  Need more specific information? Send this question directly to William Go's team.
+                </p>
+              </div>
+              <button
+                onClick={handleOpenModal}
+                className="px-3 py-1.5 text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors border border-primary/20"
+              >
+                Contact Team
+              </button>
+            </div>
+          </div>
         </div>
-        <EscalationButton onEscalate={handleEscalate} />
       </div>
-    </div>
+
+      <EscalationModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitEscalation}
+      />
+    </>
   );
 }
