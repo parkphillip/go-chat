@@ -1,7 +1,13 @@
 
-import { Edit3, MessageSquare, X, Trash2 } from 'lucide-react';
+import { Edit3, MessageSquare, X, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 interface Message {
   id: string;
@@ -15,6 +21,7 @@ interface ChatData {
   title: string;
   messages: Message[];
   lastModified: Date;
+  archived?: boolean;
 }
 
 interface SidebarProps {
@@ -23,11 +30,12 @@ interface SidebarProps {
   onSelectChat: (chatId: string) => void;
   onNewChat: () => void;
   onDeleteChat: (chatId: string) => void;
+  onArchiveChat: (chatId: string) => void;
   isOpen: boolean;
   onToggle: () => void;
 }
 
-export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, onDeleteChat, isOpen, onToggle }: SidebarProps) {
+export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, onDeleteChat, onArchiveChat, isOpen, onToggle }: SidebarProps) {
   if (!isOpen) return null;
 
   return (
@@ -57,40 +65,51 @@ export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, onDelet
       <ScrollArea className="flex-1 p-2">
         <div className="space-y-1">
           {chats.map((chat) => (
-            <div key={chat.id} className="group relative">
-              <Button
-                variant={currentChatId === chat.id ? "secondary" : "ghost"}
-                onClick={() => onSelectChat(chat.id)}
-                className="w-full justify-start p-3 h-auto text-left hover:bg-accent/50"
-              >
-                <div className="flex items-start gap-2 w-full">
-                  <MessageSquare className="h-4 w-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm text-foreground truncate">
-                      {chat.title}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {chat.lastModified.toLocaleDateString()}
+            <ContextMenu key={chat.id}>
+              <ContextMenuTrigger asChild>
+                <Button
+                  variant={currentChatId === chat.id ? "secondary" : "ghost"}
+                  onClick={() => onSelectChat(chat.id)}
+                  className="w-full justify-start p-3 h-auto text-left hover:bg-accent/50"
+                >
+                  <div className="flex items-start gap-2 w-full">
+                    <MessageSquare className="h-4 w-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm text-foreground truncate">
+                        {chat.title}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {chat.lastModified.toLocaleDateString()}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Button>
-              
-              {/* Delete button - only show on hover */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (confirm('Delete this chat? This action cannot be undone.')) {
-                    onDeleteChat(chat.id);
-                  }
-                }}
-                className="absolute right-1 top-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive hover:text-destructive-foreground"
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
-            </div>
+                </Button>
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <ContextMenuItem 
+                  onClick={() => {
+                    if (confirm('Archive this chat?')) {
+                      onArchiveChat(chat.id);
+                    }
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <Archive className="h-4 w-4" />
+                  Archive
+                </ContextMenuItem>
+                <ContextMenuItem 
+                  onClick={() => {
+                    if (confirm('Delete this chat? This action cannot be undone.')) {
+                      onDeleteChat(chat.id);
+                    }
+                  }}
+                  className="flex items-center gap-2 text-destructive focus:text-destructive"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Delete
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           ))}
         </div>
       </ScrollArea>

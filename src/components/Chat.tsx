@@ -25,6 +25,7 @@ interface ChatData {
   title: string;
   messages: Message[];
   lastModified: Date;
+  archived?: boolean;
 }
 
 const WILLIAM_GO_CONTEXT = `You are William Go, Irvine City Councilmember for District 2. You are speaking directly to constituents and students.
@@ -247,6 +248,19 @@ export function Chat() {
     setChats(prev => prev.filter(chat => chat.id !== chatId));
     
     // If we're deleting the current chat, switch to a new chat
+    if (currentChatId === chatId) {
+      createNewChat();
+    }
+  };
+
+  const archiveChat = (chatId: string) => {
+    setChats(prev => prev.map(chat => 
+      chat.id === chatId 
+        ? { ...chat, archived: true }
+        : chat
+    ));
+    
+    // If we're archiving the current chat, switch to a new chat
     if (currentChatId === chatId) {
       createNewChat();
     }
@@ -593,7 +607,7 @@ export function Chat() {
       />
       
       <Sidebar 
-        chats={chats}
+        chats={chats.filter(chat => !chat.archived)}
         currentChatId={currentChatId}
         onSelectChat={(chatId) => {
           setCurrentChatId(chatId);
@@ -601,6 +615,7 @@ export function Chat() {
         }}
         onNewChat={createNewChat}
         onDeleteChat={deleteChat}
+        onArchiveChat={archiveChat}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
