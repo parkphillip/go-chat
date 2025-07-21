@@ -364,8 +364,8 @@ export function Chat() {
       setThinkingMessage(step);
       setIsThinking(true);
       
-      // Each step takes 1.5-2.5s for more realistic thinking time
-      await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
+      // Each step takes 1.2-1.8s for optimal thinking time
+      await new Promise(resolve => setTimeout(resolve, 1200 + Math.random() * 600));
     }
     
     console.log('RAG thinking completed');

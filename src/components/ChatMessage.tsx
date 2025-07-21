@@ -32,9 +32,6 @@ export function ChatMessage({ message, onTypingComplete, suggestions, onSuggesti
               </p>
             </div>
           </div>
-          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-primary text-primary-foreground">
-            <User className="w-4 h-4" />
-          </div>
         </div>
       )}
       
