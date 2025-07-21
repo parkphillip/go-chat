@@ -30,7 +30,13 @@ export function useEscalationDetection() {
       "i don't have access to",
       "would need to check",
       "specific details aren't available",
-      "i'd recommend contacting"
+      "i'd recommend contacting",
+      "i don't have the exact",
+      "without access to",
+      "i would need more information",
+      "specific timeline",
+      "exact date",
+      "specific policy details"
     ];
     
     return uncertaintyPhrases.some(phrase => 
@@ -53,27 +59,30 @@ export function useEscalationDetection() {
   };
 
   const shouldEscalate = useCallback((messages: Message[]): boolean => {
-    if (messages.length < 4) return false; // Need at least 2 exchanges
+    if (messages.length < 2) return false; // Need at least 1 exchange
     
-    const recentMessages = messages.slice(-6); // Look at last 6 messages
-    const assistantMessages = recentMessages.filter(m => m.role === 'assistant');
+    const lastAssistantMessage = messages.filter(m => m.role === 'assistant').pop();
+    if (!lastAssistantMessage) return false;
     
-    // Check for uncertainty in recent assistant messages
-    const hasUncertainty = assistantMessages.some(msg => 
-      detectUncertainty(msg.content)
+    // Check for uncertainty in the latest assistant message
+    const hasUncertainty = detectUncertainty(lastAssistantMessage.content);
+    
+    // Check if user asked for very specific information
+    const lastUserMessage = messages.filter(m => m.role === 'user').pop();
+    if (!lastUserMessage) return false;
+    
+    const specificKeywords = [
+      'when exactly', 'specific date', 'exact time', 'timeline for',
+      'deadline', 'policy number', 'ordinance number', 'specific policy',
+      'exact details', 'meeting minutes', 'vote results', 'specific budget',
+      'exact amount', 'specific plan', 'detailed timeline'
+    ];
+    
+    const isSpecificQuestion = specificKeywords.some(keyword => 
+      lastUserMessage.content.toLowerCase().includes(keyword)
     );
     
-    // Check for repeated questions on same topic
-    const userMessages = recentMessages.filter(m => m.role === 'user');
-    const topics = userMessages.map(msg => extractTopic(msg.content));
-    const topicCounts = topics.reduce((acc, topic) => {
-      acc[topic] = (acc[topic] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    const hasRepeatedTopic = Object.values(topicCounts).some(count => count >= 2);
-    
-    return hasUncertainty && hasRepeatedTopic;
+    return hasUncertainty && isSpecificQuestion;
   }, []);
 
   const updateDetection = useCallback((messages: Message[]) => {

@@ -257,21 +257,33 @@ export function Chat() {
       ));
     } else {
       // Add to current conversation
-      setCurrentMessages(prev => {
-        const newMessages = [...prev, message];
-        
-        // Check for escalation after assistant responds
-        if (message.role === 'assistant' && !message.isTyping) {
-          const shouldEscalate = updateDetection(newMessages);
-          if (shouldEscalate) {
-            // Update the message to include escalation flag
-            const updatedMessage = { ...message, needsEscalation: true };
-            return [...prev, updatedMessage];
-          }
-        }
-        
-        return newMessages;
-      });
+      setCurrentMessages(prev => [...prev, message]);
+    }
+  };
+
+  const checkEscalationForMessage = (messages: Message[], messageId: string) => {
+    const shouldEscalate = updateDetection(messages);
+    if (shouldEscalate) {
+      if (currentChat) {
+        setChats(prev => prev.map(chat => 
+          chat.id === currentChatId 
+            ? {
+                ...chat,
+                messages: chat.messages.map(msg =>
+                  msg.id === messageId 
+                    ? { ...msg, needsEscalation: true }
+                    : msg
+                )
+              }
+            : chat
+        ));
+      } else {
+        setCurrentMessages(prev => prev.map(msg =>
+          msg.id === messageId 
+            ? { ...msg, needsEscalation: true }
+            : msg
+        ));
+      }
     }
   };
 
@@ -674,6 +686,12 @@ export function Chat() {
                               ? { ...msg, isTyping: false }
                               : msg
                           ));
+                        }
+                        
+                        // Check for escalation after typing completes
+                        if (message.role === 'assistant') {
+                          const currentMessages = currentChat?.messages || messages;
+                          checkEscalationForMessage(currentMessages, message.id);
                         }
                       }}
                     />
