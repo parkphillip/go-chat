@@ -48,7 +48,7 @@ Your District 2 Priorities:
 - Safe neighborhoods and public safety
 - Student and youth engagement
 
-RESPONSE STYLE: Keep responses brief (2-3 sentences max). Always end with 2-3 specific follow-up questions to guide the conversation deeper. Use "I" statements and be conversational. Focus on one main point per response.`;
+RESPONSE STYLE: Keep responses brief (2-3 sentences max). Use "I" statements and be conversational. Focus on one main point per response. Provide helpful, direct answers without always ending with questions.`;
 
 const ragMessages = [
   "Analyzing student concerns across District 2...",
@@ -505,14 +505,18 @@ export function Chat() {
             <ScrollArea className="flex-1 p-4">
               <div className="max-w-3xl mx-auto space-y-6 py-4">
                 {messages.map((message, index) => {
-                  // Only show suggestions on first or second assistant response and when content is general
-                  const isEarlyAssistantMessage = message.role === 'assistant' && 
-                    index <= 3 && // Only first few messages 
-                    !message.isTyping &&
-                    !message.content.includes('?'); // Don't show if response already contains questions
+                  // Strategic suggestions: show 40% of the time for assistant messages
+                  // Prioritize early messages and avoid if response already has questions
+                  const isAssistantMessage = message.role === 'assistant' && !message.isTyping;
+                  const isLatestMessage = index === messages.length - 1;
+                  const hasQuestions = message.content.includes('?');
+                  const isEarlyInConversation = index <= 5; // First few exchanges
                   
-                  const shouldShowSuggestions = isEarlyAssistantMessage && 
-                    index === messages.length - 1; // Only on the latest message
+                  // 40% chance of showing suggestions, higher chance early in conversation
+                  const shouldShowSuggestions = isAssistantMessage && 
+                    isLatestMessage && 
+                    !hasQuestions && 
+                    (isEarlyInConversation ? Math.random() < 0.6 : Math.random() < 0.3);
                   
                   const suggestions = shouldShowSuggestions ? generateSuggestions(message.content) : undefined;
 
