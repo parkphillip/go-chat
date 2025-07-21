@@ -65,6 +65,7 @@ const ragMessages = [
 export function Chat() {
   const [chats, setChats] = useState<ChatData[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [currentMessages, setCurrentMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingMessage, setThinkingMessage] = useState('');
@@ -75,6 +76,7 @@ export function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const currentChat = chats.find(chat => chat.id === currentChatId);
+  const messages = currentChat?.messages || currentMessages;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -82,7 +84,7 @@ export function Chat() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [currentChat?.messages, isThinking]);
+  }, [messages, isThinking]);
 
   useEffect(() => {
     const storedApiKey = localStorage.getItem('openai_api_key');
@@ -94,14 +96,37 @@ export function Chat() {
   }, []);
 
   const createNewChat = () => {
-    const newChat: ChatData = {
-      id: Date.now().toString(),
-      title: 'New Chat',
-      messages: [],
-      lastModified: new Date()
-    };
-    setChats(prev => [newChat, ...prev]);
-    setCurrentChatId(newChat.id);
+    // If there's a current conversation with messages, save it to history
+    if (currentChatId && messages.length > 0) {
+      if (currentChat) {
+        // Update existing chat in history
+        setChats(prev => prev.map(chat => 
+          chat.id === currentChatId 
+            ? { ...chat, messages, lastModified: new Date() }
+            : chat
+        ));
+      } else {
+        // Save current conversation to history
+        const chatToSave: ChatData = {
+          id: currentChatId,
+          title: messages[0]?.content.slice(0, 30) + (messages[0]?.content.length > 30 ? '...' : '') || 'New Chat',
+          messages: [...messages],
+          lastModified: new Date()
+        };
+        setChats(prev => [chatToSave, ...prev]);
+      }
+    }
+    
+    // Clear the interface for new chat
+    const newChatId = Date.now().toString();
+    setCurrentChatId(newChatId);
+    setCurrentMessages([]);
+    
+    // Clear states for fresh start
+    setInput('');
+    setIsThinking(false);
+    setThinkingMessage('');
+    setIsProcessingResponse(false);
   };
 
   const updateChatTitle = (chatId: string, firstMessage: string) => {
@@ -113,15 +138,21 @@ export function Chat() {
   };
 
   const addMessage = (chatId: string, message: Message) => {
-    setChats(prev => prev.map(chat => 
-      chat.id === chatId 
-        ? { 
-            ...chat, 
-            messages: [...chat.messages, message],
-            lastModified: new Date()
-          }
-        : chat
-    ));
+    if (currentChat) {
+      // Update existing chat in history
+      setChats(prev => prev.map(chat => 
+        chat.id === chatId 
+          ? { 
+              ...chat, 
+              messages: [...chat.messages, message],
+              lastModified: new Date()
+            }
+          : chat
+      ));
+    } else {
+      // Add to current conversation
+      setCurrentMessages(prev => [...prev, message]);
+    }
   };
 
   const getTokenLimit = (question: string): number => {
@@ -223,15 +254,8 @@ export function Chat() {
 
     let chatId = currentChatId;
     if (!chatId) {
-      createNewChat();
+      // Create temporary chat ID for current conversation
       chatId = Date.now().toString();
-      const newChat: ChatData = {
-        id: chatId,
-        title: input.slice(0, 30) + (input.length > 30 ? '...' : ''),
-        messages: [],
-        lastModified: new Date()
-      };
-      setChats(prev => [newChat, ...prev]);
       setCurrentChatId(chatId);
     }
 
@@ -245,7 +269,7 @@ export function Chat() {
     addMessage(chatId, userMessage);
     
     // Update chat title if it's the first message
-    if (!currentChat?.messages.length) {
+    if (messages.length === 1) {
       updateChatTitle(chatId, input);
     }
 
@@ -339,7 +363,10 @@ export function Chat() {
       <Sidebar 
         chats={chats}
         currentChatId={currentChatId}
-        onSelectChat={setCurrentChatId}
+        onSelectChat={(chatId) => {
+          setCurrentChatId(chatId);
+          setCurrentMessages([]);
+        }}
         onNewChat={createNewChat}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
@@ -369,7 +396,7 @@ export function Chat() {
         )}
         
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
-          {!currentChat?.messages.length && !isThinking ? (
+          {!messages.length && !isThinking ? (
             <div className="flex-1 flex items-center justify-center p-8">
               <div className="text-center max-w-2xl">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -397,24 +424,32 @@ export function Chat() {
           ) : (
             <ScrollArea className="flex-1 p-4">
               <div className="max-w-3xl mx-auto space-y-6 py-4">
-                {currentChat?.messages.map((message) => (
+                {messages.map((message) => (
                   <ChatMessage 
                     key={message.id} 
                     message={message}
                     onTypingComplete={() => {
                       // Update message to stop typing animation
-                      setChats(prev => prev.map(chat => 
-                        chat.id === currentChatId 
-                          ? {
-                              ...chat,
-                              messages: chat.messages.map(msg =>
-                                msg.id === message.id 
-                                  ? { ...msg, isTyping: false }
-                                  : msg
-                              )
-                            }
-                          : chat
-                      ));
+                      if (currentChat) {
+                        setChats(prev => prev.map(chat => 
+                          chat.id === currentChatId 
+                            ? {
+                                ...chat,
+                                messages: chat.messages.map(msg =>
+                                  msg.id === message.id 
+                                    ? { ...msg, isTyping: false }
+                                    : msg
+                                )
+                              }
+                            : chat
+                        ));
+                      } else {
+                        setCurrentMessages(prev => prev.map(msg =>
+                          msg.id === message.id 
+                            ? { ...msg, isTyping: false }
+                            : msg
+                        ));
+                      }
                     }}
                   />
                 ))}
