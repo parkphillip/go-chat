@@ -525,14 +525,14 @@ export function Chat() {
         
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
           {!messages.length && !isThinking ? (
-            <div className="flex-1 flex items-center justify-center p-8 mt-[5vh]">
+            <div className="flex-1 flex items-center justify-center p-8 mt-[2vh]">
               <div className="text-center max-w-2xl w-full">
                 {/* William Go faded headshot floating above title - scaled up 15% */}
                 <div className="mb-6 relative overflow-hidden">
                   <img 
                     src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
                     alt="William Go, Irvine City Councilmember District 2"
-                    className="w-56 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500"
+                    className="w-52 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500"
                   />
                   {/* Simple, clean fade without lines */}
                   <div 
@@ -542,21 +542,21 @@ export function Chat() {
                     }}
                   ></div>
                 </div>
-                <h1 className="text-5xl font-medium text-foreground mb-3 relative z-10">
+                <h1 className="text-4xl font-medium text-foreground mb-3 relative z-10">
                   Chat with William Go
                 </h1>
-                <p className="text-2xl text-muted-foreground mb-10">
+                <p className="text-xl text-muted-foreground mb-9">
                   Irvine Councilmember District 2
                 </p>
                 
                 {/* Input form for new chat page */}
-                <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-6">
+                <form onSubmit={handleSubmit} className="max-w-xl mx-auto mb-6">
                   <div className="relative">
                     <Input
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       placeholder={apiKey ? `Ask William Go about ${typingText}...` : "Please set your OpenAI API key first"}
-                      className="w-full pl-6 pr-16 py-6 text-lg rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                      className="w-full pl-6 pr-14 py-5 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                       disabled={isThinking || isProcessingResponse || !apiKey}
                     />
                     <Button
