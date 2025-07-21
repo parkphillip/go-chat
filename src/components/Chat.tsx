@@ -262,8 +262,14 @@ export function Chat() {
   };
 
   const checkEscalationForMessage = (messages: Message[], messageId: string) => {
+    console.log('Checking escalation for message:', messageId);
+    console.log('Messages for escalation check:', messages.map(m => ({ role: m.role, content: m.content.slice(0, 50) })));
+    
     const shouldEscalate = updateDetection(messages);
+    console.log('Should escalate:', shouldEscalate);
+    
     if (shouldEscalate) {
+      console.log('Escalation triggered, updating message');
       if (currentChat) {
         setChats(prev => prev.map(chat => 
           chat.id === currentChatId 
@@ -490,6 +496,17 @@ export function Chat() {
       setThinkingMessage('');
       setIsProcessingResponse(false);
       addMessage(chatId, assistantMessage);
+
+      // Save chat to history after first assistant response if not already saved
+      if (!currentChat && messages.length === 1) {
+        const chatToSave: ChatData = {
+          id: chatId,
+          title: messages[0]?.content.slice(0, 30) + (messages[0]?.content.length > 30 ? '...' : '') || 'New Chat',
+          messages: [messages[0], assistantMessage],
+          lastModified: new Date()
+        };
+        setChats(prev => [chatToSave, ...prev]);
+      }
     } catch (error) {
       console.error('OpenAI API error:', error);
       const errorMessage: Message = {

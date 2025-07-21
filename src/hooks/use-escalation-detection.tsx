@@ -61,28 +61,41 @@ export function useEscalationDetection() {
   const shouldEscalate = useCallback((messages: Message[]): boolean => {
     if (messages.length < 2) return false; // Need at least 1 exchange
     
+    console.log('Checking escalation with messages:', messages.length);
+    
     const lastAssistantMessage = messages.filter(m => m.role === 'assistant').pop();
     if (!lastAssistantMessage) return false;
     
+    console.log('Last assistant message:', lastAssistantMessage.content.slice(0, 100));
+    
     // Check for uncertainty in the latest assistant message
     const hasUncertainty = detectUncertainty(lastAssistantMessage.content);
+    console.log('Has uncertainty:', hasUncertainty);
     
     // Check if user asked for very specific information
     const lastUserMessage = messages.filter(m => m.role === 'user').pop();
     if (!lastUserMessage) return false;
     
+    console.log('Last user message:', lastUserMessage.content);
+    
     const specificKeywords = [
-      'when exactly', 'specific date', 'exact time', 'timeline for',
+      'exact date', 'specific date', 'exact time', 'timeline for',
       'deadline', 'policy number', 'ordinance number', 'specific policy',
       'exact details', 'meeting minutes', 'vote results', 'specific budget',
-      'exact amount', 'specific plan', 'detailed timeline'
+      'exact amount', 'specific plan', 'detailed timeline', 'exact ways',
+      'specific information', 'exact policy', 'implementation date'
     ];
     
     const isSpecificQuestion = specificKeywords.some(keyword => 
       lastUserMessage.content.toLowerCase().includes(keyword)
     );
     
-    return hasUncertainty && isSpecificQuestion;
+    console.log('Is specific question:', isSpecificQuestion, specificKeywords.filter(k => lastUserMessage.content.toLowerCase().includes(k)));
+    
+    const result = hasUncertainty || isSpecificQuestion; // Changed to OR instead of AND
+    console.log('Final escalation result:', result);
+    
+    return result;
   }, []);
 
   const updateDetection = useCallback((messages: Message[]) => {

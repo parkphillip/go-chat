@@ -80,7 +80,13 @@ export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, isOpen,
       </ScrollArea>
       
       <div className="p-4 border-t border-border">
-        <div className="text-xs text-muted-foreground/70 text-center">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex-1 min-w-0">
+            <div className="font-medium text-sm text-foreground">William Go</div>
+            <div className="text-xs text-muted-foreground">Irvine City Council • District 2</div>
+          </div>
+        </div>
+        <div className="text-xs text-muted-foreground/70">
           Powered by Candid
         </div>
       </div>
