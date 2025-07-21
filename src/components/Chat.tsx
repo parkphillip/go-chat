@@ -583,14 +583,14 @@ export function Chat() {
                       >
                         <Mic className="h-4 w-4" />
                       </Button>
-                      <Button
-                        type="submit"
-                        size="icon"
-                        disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                      >
-                        <Send className="h-4 w-4" />
-                      </Button>
+                       <Button
+                         type="submit"
+                         size="icon"
+                         disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
+                         className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                       >
+                         <Send className="h-4 w-4" />
+                       </Button>
                     </div>
                   </div>
                 </form>
@@ -714,7 +714,7 @@ export function Chat() {
                        type="submit"
                        size="icon"
                        disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                       className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                       className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                      >
                        <Send className="h-4 w-4" />
                      </Button>
