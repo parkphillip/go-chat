@@ -56,16 +56,26 @@ RESPONSE STYLE:
 - Focus on concrete plans, timelines, and specific initiatives rather than vague responses`;
 
 const ragMessages = [
+  "Searching District 2 resident database...",
   "Analyzing student concerns across District 2...",
+  "Accessing City Council meeting archives...",
   "Gathering Great Park development updates...",
   "Retrieving William Go's transportation initiatives...",
   "Loading housing affordability data for Irvine...",
-  "Accessing recent City Council meeting notes...",
+  "Connecting to Irvine planning department records...",
   "Fetching community feedback from District 2 residents...",
   "Reviewing William Go's policy positions...",
   "Connecting to Irvine transit planning documents...",
   "Analyzing bike lane expansion proposals...",
-  "Loading Irvine Connect shuttle optimization plans..."
+  "Loading Irvine Connect shuttle optimization plans...",
+  "Searching budget allocation records...",
+  "Accessing environmental impact assessments...",
+  "Retrieving demographic analysis for District 2...",
+  "Loading traffic pattern studies...",
+  "Connecting to Orange County planning database...",
+  "Analyzing zoning regulation updates...",
+  "Fetching public safety incident reports...",
+  "Searching community event participation data..."
 ];
 
 export function Chat() {
@@ -96,52 +106,71 @@ export function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Generate contextual suggestions based on the message content
-  const generateSuggestions = (content: string): string[] => {
+  // Generate contextual suggestions based on the message content and conversation history
+  const generateSuggestions = (content: string, conversationHistory: Message[]): string[] => {
     const suggestions = [];
     const lowerContent = content.toLowerCase();
+    
+    // Get previously asked questions to avoid repetition
+    const previousQuestions = conversationHistory
+      .filter(msg => msg.role === 'user')
+      .map(msg => msg.content.toLowerCase());
+
+    const hasBeenAsked = (question: string) => 
+      previousQuestions.some(prev => 
+        prev.includes(question.toLowerCase().split(' ').slice(0, 3).join(' '))
+      );
 
     // Policy-related suggestions
     if (lowerContent.includes('policy') || lowerContent.includes('policies')) {
-      suggestions.push("What are William Go's key policy priorities?", "How do these policies compare to other districts?");
+      if (!hasBeenAsked("timeline for policy implementation")) suggestions.push("What's the timeline for policy implementation?");
+      if (!hasBeenAsked("community input on policies")) suggestions.push("How can residents provide input on these policies?");
+      if (!hasBeenAsked("policy funding sources")) suggestions.push("How are these policies being funded?");
     }
-
     // Housing-related suggestions
-    if (lowerContent.includes('housing') || lowerContent.includes('development')) {
-      suggestions.push("What's the current housing situation in District 2?", "What are the proposed housing solutions?");
+    else if (lowerContent.includes('housing') || lowerContent.includes('development') || lowerContent.includes('affordable')) {
+      if (!hasBeenAsked("housing development timeline")) suggestions.push("What's the timeline for new housing developments?");
+      if (!hasBeenAsked("affordable housing eligibility")) suggestions.push("Who qualifies for affordable housing programs?");
+      if (!hasBeenAsked("housing impact on traffic")) suggestions.push("How will new housing impact traffic?");
     }
-
     // Transportation suggestions
-    if (lowerContent.includes('transport') || lowerContent.includes('bike') || lowerContent.includes('road')) {
-      suggestions.push("What transportation improvements are planned?", "How will bike lane expansions work?");
+    else if (lowerContent.includes('transport') || lowerContent.includes('bike') || lowerContent.includes('shuttle')) {
+      if (!hasBeenAsked("transportation project costs")) suggestions.push("What's the cost of these transportation projects?");
+      if (!hasBeenAsked("bike lane safety measures")) suggestions.push("What safety measures are included in bike lane designs?");
+      if (!hasBeenAsked("shuttle service expansion")) suggestions.push("When will shuttle service be expanded?");
     }
-
     // Great Park suggestions
-    if (lowerContent.includes('great park') || lowerContent.includes('park')) {
-      suggestions.push("What are the latest Great Park developments?", "How will the Great Park benefit residents?");
+    else if (lowerContent.includes('great park') || lowerContent.includes('park')) {
+      if (!hasBeenAsked("park construction timeline")) suggestions.push("What's the construction timeline for Great Park phases?");
+      if (!hasBeenAsked("park funding sources")) suggestions.push("How is Great Park development funded?");
+      if (!hasBeenAsked("park community programs")) suggestions.push("What recreational programs will be available?");
     }
-
     // Budget/Finance suggestions
-    if (lowerContent.includes('budget') || lowerContent.includes('cost') || lowerContent.includes('funding')) {
-      suggestions.push("What's the budget allocation for this initiative?", "How is this project being funded?");
+    else if (lowerContent.includes('budget') || lowerContent.includes('cost') || lowerContent.includes('funding')) {
+      if (!hasBeenAsked("budget transparency")) suggestions.push("How can residents track budget spending?");
+      if (!hasBeenAsked("tax impact")) suggestions.push("Will this impact local taxes?");
+      if (!hasBeenAsked("alternative funding")) suggestions.push("Are there alternative funding sources being considered?");
+    }
+    // Community/General suggestions
+    else {
+      if (!hasBeenAsked("community meetings schedule")) suggestions.push("When are the next community meetings?");
+      if (!hasBeenAsked("district priorities ranking")) suggestions.push("What are your top 3 priorities for 2025?");
+      if (!hasBeenAsked("student engagement opportunities")) suggestions.push("How can students get more involved in local government?");
     }
 
-    // Community suggestions
-    if (lowerContent.includes('community') || lowerContent.includes('resident')) {
-      suggestions.push("How can residents get involved?", "What community programs are available?");
-    }
-
-    // Default suggestions if no specific topic detected
+    // If no specific suggestions or all have been asked, add general ones
     if (suggestions.length === 0) {
-      suggestions.push(
-        "What other priorities does William Go have?",
-        "How can I stay updated on District 2 developments?",
-        "What community events are coming up?"
-      );
+      const generalSuggestions = [
+        "What challenges do you foresee with implementation?",
+        "How does this compare to other Orange County cities?",
+        "What role can local businesses play in this?"
+      ];
+      generalSuggestions.forEach(suggestion => {
+        if (!hasBeenAsked(suggestion)) suggestions.push(suggestion);
+      });
     }
 
-    // Limit to 3 suggestions
-    return suggestions.slice(0, 3);
+    return suggestions.slice(0, 2); // Limit to 2 suggestions to avoid clutter
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -266,29 +295,60 @@ export function Chat() {
     const lowerQuery = query.toLowerCase();
     const steps = [];
     
+    // Always start with database search
+    steps.push("Searching District 2 resident database...");
+    
     if (lowerQuery.includes('william') || lowerQuery.includes('background') || lowerQuery.includes('experience')) {
-      steps.push("Searching William Go's background...");
+      steps.push("Accessing City Council meeting archives...");
+      steps.push("Retrieving William Go's background information...");
     }
     if (lowerQuery.includes('great park') || lowerQuery.includes('development')) {
+      steps.push("Connecting to Irvine planning department records...");
       steps.push("Analyzing Great Park development plans...");
     }
     if (lowerQuery.includes('housing') || lowerQuery.includes('affordable')) {
+      steps.push("Loading housing affordability data for Irvine...");
       steps.push("Retrieving housing policy positions...");
+      steps.push("Analyzing zoning regulation updates...");
     }
     if (lowerQuery.includes('transportation') || lowerQuery.includes('bike') || lowerQuery.includes('transit')) {
+      steps.push("Connecting to Irvine transit planning documents...");
       steps.push("Accessing transportation initiatives...");
+      steps.push("Loading traffic pattern studies...");
     }
     if (lowerQuery.includes('student') || lowerQuery.includes('youth') || lowerQuery.includes('education')) {
       steps.push("Analyzing student concerns across District 2...");
+      steps.push("Fetching community feedback from District 2 residents...");
     }
     if (lowerQuery.includes('goal') || lowerQuery.includes('priority') || lowerQuery.includes('plan')) {
       steps.push("Reviewing William Go's policy positions...");
+      steps.push("Connecting to Orange County planning database...");
     }
     
-    // Default steps if none match
-    if (steps.length === 0) {
+    // Add budget/cost related steps for financial queries
+    if (lowerQuery.includes('cost') || lowerQuery.includes('budget') || lowerQuery.includes('funding')) {
+      steps.push("Searching budget allocation records...");
+      steps.push("Accessing environmental impact assessments...");
+    }
+    
+    // Default steps if none match - ensure we always have at least 3-4 steps
+    if (steps.length < 2) {
       steps.push("Gathering District 2 updates...");
       steps.push("Connecting to Irvine community data...");
+      steps.push("Fetching public safety incident reports...");
+    }
+    
+    // Ensure we have at least 3 steps for longer thinking time
+    while (steps.length < 3) {
+      const additionalSteps = [
+        "Retrieving demographic analysis for District 2...",
+        "Searching community event participation data...",
+        "Accessing environmental impact assessments..."
+      ];
+      const randomStep = additionalSteps[Math.floor(Math.random() * additionalSteps.length)];
+      if (!steps.includes(randomStep)) {
+        steps.push(randomStep);
+      }
     }
     
     return steps;
@@ -304,8 +364,8 @@ export function Chat() {
       setThinkingMessage(step);
       setIsThinking(true);
       
-      // Each step takes 1-1.5s
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 500));
+      // Each step takes 1.5-2.5s for more realistic thinking time
+      await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
     }
     
     console.log('RAG thinking completed');
@@ -520,7 +580,7 @@ export function Chat() {
                     isLatestMessage && 
                     !hasQuestions;
                   
-                  const suggestions = shouldShowSuggestions ? generateSuggestions(message.content) : undefined;
+                  const suggestions = shouldShowSuggestions ? generateSuggestions(message.content, messages) : undefined;
 
                   return (
                     <ChatMessage 
