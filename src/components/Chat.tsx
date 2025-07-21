@@ -81,7 +81,7 @@ export function Chat() {
     words: ['policy', 'goals', 'the great park', 'housing', 'bike lanes', 'transportation', 'community'],
     typeSpeed: 80,
     deleteSpeed: 40,
-    pauseDuration: 1500
+    pauseDuration: 3000
   });
 
   const currentChat = chats.find(chat => chat.id === currentChatId);
