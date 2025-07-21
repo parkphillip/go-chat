@@ -78,10 +78,10 @@ export function Chat() {
 
   // Typing animation for placeholder
   const typingText = useTypingAnimation({
-    words: ['policy', 'goals', 'the great park', 'housing', 'bike lanes', 'transportation', 'community'],
+    words: ['policy...', 'goals...', 'the great park...', 'housing...', 'bike lanes...', 'transportation...', 'community...'],
     typeSpeed: 80,
     deleteSpeed: 40,
-    pauseDuration: 5000
+    pauseDuration: 6500
   });
 
   const currentChat = chats.find(chat => chat.id === currentChatId);
@@ -89,6 +89,60 @@ export function Chat() {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Generate contextual suggestions based on the message content
+  const generateSuggestions = (content: string): string[] => {
+    const suggestions = [];
+    const lowerContent = content.toLowerCase();
+
+    // Policy-related suggestions
+    if (lowerContent.includes('policy') || lowerContent.includes('policies')) {
+      suggestions.push("What are William Go's key policy priorities?", "How do these policies compare to other districts?");
+    }
+
+    // Housing-related suggestions
+    if (lowerContent.includes('housing') || lowerContent.includes('development')) {
+      suggestions.push("What's the current housing situation in District 2?", "What are the proposed housing solutions?");
+    }
+
+    // Transportation suggestions
+    if (lowerContent.includes('transport') || lowerContent.includes('bike') || lowerContent.includes('road')) {
+      suggestions.push("What transportation improvements are planned?", "How will bike lane expansions work?");
+    }
+
+    // Great Park suggestions
+    if (lowerContent.includes('great park') || lowerContent.includes('park')) {
+      suggestions.push("What are the latest Great Park developments?", "How will the Great Park benefit residents?");
+    }
+
+    // Budget/Finance suggestions
+    if (lowerContent.includes('budget') || lowerContent.includes('cost') || lowerContent.includes('funding')) {
+      suggestions.push("What's the budget allocation for this initiative?", "How is this project being funded?");
+    }
+
+    // Community suggestions
+    if (lowerContent.includes('community') || lowerContent.includes('resident')) {
+      suggestions.push("How can residents get involved?", "What community programs are available?");
+    }
+
+    // Default suggestions if no specific topic detected
+    if (suggestions.length === 0) {
+      suggestions.push(
+        "What other priorities does William Go have?",
+        "How can I stay updated on District 2 developments?",
+        "What community events are coming up?"
+      );
+    }
+
+    // Limit to 3 suggestions
+    return suggestions.slice(0, 3);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInput(suggestion);
+    // Optionally auto-submit the suggestion
+    // handleSubmit could be called here with the suggestion
   };
 
   useEffect(() => {
@@ -450,35 +504,45 @@ export function Chat() {
           ) : (
             <ScrollArea className="flex-1 p-4">
               <div className="max-w-3xl mx-auto space-y-6 py-4">
-                {messages.map((message) => (
-                  <ChatMessage 
-                    key={message.id} 
-                    message={message}
-                    onTypingComplete={() => {
-                      // Update message to stop typing animation
-                      if (currentChat) {
-                        setChats(prev => prev.map(chat => 
-                          chat.id === currentChatId 
-                            ? {
-                                ...chat,
-                                messages: chat.messages.map(msg =>
-                                  msg.id === message.id 
-                                    ? { ...msg, isTyping: false }
-                                    : msg
-                                )
-                              }
-                            : chat
-                        ));
-                      } else {
-                        setCurrentMessages(prev => prev.map(msg =>
-                          msg.id === message.id 
-                            ? { ...msg, isTyping: false }
-                            : msg
-                        ));
-                      }
-                    }}
-                  />
-                ))}
+                {messages.map((message, index) => {
+                  const isLastAssistantMessage = message.role === 'assistant' && 
+                    index === messages.length - 1 &&
+                    !message.isTyping;
+                  
+                  const suggestions = isLastAssistantMessage ? generateSuggestions(message.content) : undefined;
+
+                  return (
+                    <ChatMessage 
+                      key={message.id} 
+                      message={message}
+                      suggestions={suggestions}
+                      onSuggestionClick={handleSuggestionClick}
+                      onTypingComplete={() => {
+                        // Update message to stop typing animation
+                        if (currentChat) {
+                          setChats(prev => prev.map(chat => 
+                            chat.id === currentChatId 
+                              ? {
+                                  ...chat,
+                                  messages: chat.messages.map(msg =>
+                                    msg.id === message.id 
+                                      ? { ...msg, isTyping: false }
+                                      : msg
+                                  )
+                                }
+                              : chat
+                          ));
+                        } else {
+                          setCurrentMessages(prev => prev.map(msg =>
+                            msg.id === message.id 
+                              ? { ...msg, isTyping: false }
+                              : msg
+                          ));
+                        }
+                      }}
+                    />
+                  );
+                })}
                 {(isThinking || isProcessingResponse) && thinkingMessage && (
                   <div>
                     <ThinkingAnimation message={thinkingMessage} />

@@ -1,5 +1,6 @@
 import { User } from 'lucide-react';
 import { TypingAnimation } from './TypingAnimation';
+import { QuestionSuggestions } from './QuestionSuggestions';
 
 interface Message {
   id: string;
@@ -12,9 +13,11 @@ interface Message {
 interface ChatMessageProps {
   message: Message;
   onTypingComplete?: () => void;
+  suggestions?: string[];
+  onSuggestionClick?: (suggestion: string) => void;
 }
 
-export function ChatMessage({ message, onTypingComplete }: ChatMessageProps) {
+export function ChatMessage({ message, onTypingComplete, suggestions, onSuggestionClick }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   return (
@@ -37,26 +40,36 @@ export function ChatMessage({ message, onTypingComplete }: ChatMessageProps) {
       
       {/* Assistant message */}
       {!isUser && (
-        <div className="flex gap-3 mb-4">
-          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
-            WG
-          </div>
-          <div className="flex flex-col max-w-[75%] items-start">
-            <div className="px-4 py-3 rounded-2xl bg-muted/50 rounded-bl-md">
-              <div className="text-sm leading-relaxed whitespace-pre-wrap text-foreground">
-                {message.isTyping ? (
-                  <TypingAnimation 
-                    text={message.content} 
-                    onComplete={onTypingComplete}
-                    speed={8}
-                  />
-                ) : (
-                  message.content
-                )}
+        <>
+          <div className="flex gap-3 mb-4">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
+              WG
+            </div>
+            <div className="flex flex-col max-w-[75%] items-start">
+              <div className="px-4 py-3 rounded-2xl bg-muted/50 rounded-bl-md">
+                <div className="text-sm leading-relaxed whitespace-pre-wrap text-foreground">
+                  {message.isTyping ? (
+                    <TypingAnimation 
+                      text={message.content} 
+                      onComplete={onTypingComplete}
+                      speed={8}
+                    />
+                  ) : (
+                    message.content
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+          
+          {/* Show suggestions only for assistant messages that are not typing and have suggestions */}
+          {!message.isTyping && suggestions && suggestions.length > 0 && onSuggestionClick && (
+            <QuestionSuggestions 
+              suggestions={suggestions} 
+              onSuggestionClick={onSuggestionClick}
+            />
+          )}
+        </>
       )}
     </div>
   );
