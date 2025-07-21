@@ -498,7 +498,6 @@ export function Chat() {
         onNewChat={createNewChat}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
-        onOpenSettings={() => setShowApiKeyModal(true)}
       />
       
       <div className={`flex-1 flex flex-col ${sidebarOpen ? 'ml-64' : 'ml-0'} transition-all duration-200`}>
