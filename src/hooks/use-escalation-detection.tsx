@@ -83,7 +83,11 @@ export function useEscalationDetection() {
       'deadline', 'policy number', 'ordinance number', 'specific policy',
       'exact details', 'meeting minutes', 'vote results', 'specific budget',
       'exact amount', 'specific plan', 'detailed timeline', 'exact ways',
-      'specific information', 'exact policy', 'implementation date'
+      'specific information', 'exact policy', 'implementation date',
+      'exact cost', 'specific cost', 'exact price', 'specific price',
+      'more specific', 'very specific', 'specific question', 'exact number',
+      'specific timeline', 'exact timeline', 'more detail', 'exact detail',
+      'specific detail', 'more information'
     ];
     
     const isSpecificQuestion = specificKeywords.some(keyword => 
