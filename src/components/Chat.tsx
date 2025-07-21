@@ -413,16 +413,16 @@ export function Chat() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
-                      className="w-full pl-4 pr-12 py-4 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                      className="w-full pl-6 pr-14 py-5 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                       disabled={isThinking || isProcessingResponse || !apiKey}
                     />
                     <Button
                       type="submit"
                       size="icon"
                       disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-primary hover:bg-primary/90"
                     >
-                      <Send className="h-4 w-4" />
+                      <Send className="h-4 w-5" />
                     </Button>
                   </div>
                 </form>
@@ -490,16 +490,16 @@ export function Chat() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
-                    className="w-full pl-4 pr-12 py-4 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                    className="w-full pl-6 pr-14 py-5 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                     disabled={isThinking || isProcessingResponse || !apiKey}
                   />
                   <Button
                     type="submit"
                     size="icon"
                     disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-primary hover:bg-primary/90"
                   >
-                    <Send className="h-4 w-4" />
+                    <Send className="h-4 w-5" />
                   </Button>
                 </div>
               </form>
