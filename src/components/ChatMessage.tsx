@@ -43,24 +43,31 @@ export function ChatMessage({ message, onTypingComplete }: ChatMessageProps) {
       
       {/* Assistant message */}
       {!isUser && (
-        <div className="flex flex-col items-start max-w-full">
-          <div className="text-sm leading-relaxed whitespace-pre-wrap text-foreground">
-            {message.isTyping ? (
-              <TypingAnimation 
-                text={message.content} 
-                onComplete={onTypingComplete}
-                speed={15}
-              />
-            ) : (
-              message.content
-            )}
+        <div className="flex gap-3 mb-4">
+          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
+            WG
           </div>
-          <span className="text-xs text-muted-foreground mt-2">
-            {message.timestamp.toLocaleTimeString([], { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            })}
-          </span>
+          <div className="flex flex-col max-w-[75%] items-start">
+            <div className="px-4 py-3 rounded-2xl bg-muted/50 rounded-bl-md">
+              <div className="text-sm leading-relaxed whitespace-pre-wrap text-foreground">
+                {message.isTyping ? (
+                  <TypingAnimation 
+                    text={message.content} 
+                    onComplete={onTypingComplete}
+                    speed={15}
+                  />
+                ) : (
+                  message.content
+                )}
+              </div>
+            </div>
+            <span className="text-xs text-muted-foreground mt-1 px-1">
+              {message.timestamp.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}
+            </span>
+          </div>
         </div>
       )}
     </div>

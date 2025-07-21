@@ -123,6 +123,29 @@ export function Chat() {
     ));
   };
 
+  const getTokenLimit = (question: string): number => {
+    const lowerQuestion = question.toLowerCase();
+    
+    // Comprehensive questions need more tokens
+    if (lowerQuestion.includes('comprehensive') || lowerQuestion.includes('detailed') || 
+        lowerQuestion.includes('explain') || lowerQuestion.includes('overview') ||
+        lowerQuestion.includes('tell me about') || lowerQuestion.includes('describe') ||
+        lowerQuestion.includes('what are your plans') || lowerQuestion.includes('policy') ||
+        lowerQuestion.includes('strategy')) {
+      return 300;
+    }
+    
+    // Simple yes/no or basic questions
+    if (lowerQuestion.includes('yes') || lowerQuestion.includes('no') || 
+        lowerQuestion.includes('when') || lowerQuestion.includes('where') ||
+        lowerQuestion.length < 30) {
+      return 150;
+    }
+    
+    // Default for moderate questions
+    return 220;
+  };
+
   const shouldShowReasoning = (query: string) => {
     // Check if query is meaningful (not gibberish)
     const meaningfulWords = [
@@ -243,7 +266,7 @@ export function Chat() {
           { role: 'system', content: WILLIAM_GO_CONTEXT },
           { role: 'user', content: userInput }
         ],
-        max_tokens: 150,
+        max_tokens: getTokenLimit(userInput),
         temperature: 0.7
       });
 
