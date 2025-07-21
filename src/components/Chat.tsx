@@ -546,12 +546,12 @@ export function Chat() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       placeholder={apiKey ? `Ask William Go about ${typingText}...` : "Please set your OpenAI API key first"}
-                      className="w-full pl-6 pr-16 py-7 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                      className="w-full pl-6 pr-16 pt-6 pb-16 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                       disabled={isThinking || isProcessingResponse || !apiKey}
                     />
                     
-                    {/* Bottom icons row */}
-                    <div className="absolute bottom-3 left-6 flex gap-2">
+                    {/* Bottom icons row - 2 left, 1 right */}
+                    <div className="absolute bottom-4 left-6 flex gap-2">
                       <Button
                         type="button"
                         size="icon"
@@ -566,18 +566,22 @@ export function Chat() {
                         size="icon"
                         variant="ghost"
                         className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                        onClick={() => console.log('Voice input')}
+                        onClick={() => console.log('Image upload')}
                       >
-                        <Mic className="h-4 w-4" />
+                        <Image className="h-4 w-4" />
                       </Button>
+                    </div>
+                    
+                    {/* Mic icon on the right */}
+                    <div className="absolute bottom-4 right-16 flex gap-2">
                       <Button
                         type="button"
                         size="icon"
                         variant="ghost"
                         className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                        onClick={() => console.log('Image upload')}
+                        onClick={() => console.log('Voice input')}
                       >
-                        <Image className="h-4 w-4" />
+                        <Mic className="h-4 w-4" />
                       </Button>
                     </div>
                     
@@ -585,7 +589,7 @@ export function Chat() {
                       type="submit"
                       size="icon"
                       disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                     >
                       <Send className="h-4 w-4" />
                     </Button>
@@ -670,12 +674,12 @@ export function Chat() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={apiKey ? "Ask William Go anything..." : "Please set your OpenAI API key first"}
-                    className="w-full pl-20 pr-16 py-7 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                    className="w-full pl-6 pr-16 pt-6 pb-16 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                     disabled={isThinking || isProcessingResponse || !apiKey}
                   />
                   
-                  {/* Bottom icons row */}
-                  <div className="absolute bottom-3 left-6 flex gap-2">
+                  {/* Bottom icons row - 2 left, 1 right */}
+                  <div className="absolute bottom-4 left-6 flex gap-2">
                     <Button
                       type="button"
                       size="icon"
@@ -690,18 +694,22 @@ export function Chat() {
                       size="icon"
                       variant="ghost"
                       className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                      onClick={() => console.log('Voice input')}
+                      onClick={() => console.log('Image upload')}
                     >
-                      <Mic className="h-4 w-4" />
+                      <Image className="h-4 w-4" />
                     </Button>
+                  </div>
+                  
+                  {/* Mic icon on the right */}
+                  <div className="absolute bottom-4 right-16 flex gap-2">
                     <Button
                       type="button"
                       size="icon"
                       variant="ghost"
                       className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                      onClick={() => console.log('Image upload')}
+                      onClick={() => console.log('Voice input')}
                     >
-                      <Image className="h-4 w-4" />
+                      <Mic className="h-4 w-4" />
                     </Button>
                   </div>
                   
@@ -709,7 +717,7 @@ export function Chat() {
                     type="submit"
                     size="icon"
                     disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
