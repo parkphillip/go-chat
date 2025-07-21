@@ -8,6 +8,7 @@ import { ThinkingAnimation } from './ThinkingAnimation';
 import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
 import { ApiKeyModal } from './ApiKeyModal';
+import { useTypingAnimation } from '@/hooks/use-typing-animation';
 import OpenAI from 'openai';
 
 interface Message {
@@ -74,6 +75,14 @@ export function Chat() {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [isProcessingResponse, setIsProcessingResponse] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Typing animation for placeholder
+  const typingText = useTypingAnimation({
+    words: ['policy', 'goals', 'the great park', 'housing', 'bike lanes', 'transportation', 'community'],
+    typeSpeed: 80,
+    deleteSpeed: 40,
+    pauseDuration: 1500
+  });
 
   const currentChat = chats.find(chat => chat.id === currentChatId);
   const messages = currentChat?.messages || currentMessages;
@@ -412,7 +421,7 @@ export function Chat() {
                     <Input
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
+                      placeholder={apiKey ? `Ask William Go about ${typingText}...` : "Please set your OpenAI API key first"}
                       className="w-full pl-6 pr-14 py-5 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                       disabled={isThinking || isProcessingResponse || !apiKey}
                     />
@@ -489,7 +498,7 @@ export function Chat() {
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
+                    placeholder={apiKey ? `Ask William Go about ${typingText}...` : "Please set your OpenAI API key first"}
                     className="w-full pl-6 pr-14 py-5 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                     disabled={isThinking || isProcessingResponse || !apiKey}
                   />
