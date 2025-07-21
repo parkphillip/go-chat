@@ -1,4 +1,4 @@
-import { Plus, MessageSquare, X } from 'lucide-react';
+import { Plus, MessageSquare, X, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -23,9 +23,10 @@ interface SidebarProps {
   onNewChat: () => void;
   isOpen: boolean;
   onToggle: () => void;
+  onOpenSettings?: () => void;
 }
 
-export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, isOpen, onToggle }: SidebarProps) {
+export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, isOpen, onToggle, onOpenSettings }: SidebarProps) {
   if (!isOpen) return null;
 
   return (
@@ -77,9 +78,21 @@ export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, isOpen,
       </ScrollArea>
       
       <div className="p-4 border-t border-border">
-        <div className="text-xs text-muted-foreground">
-          <div className="font-medium mb-1">William Go</div>
-          <div>Irvine City Council • District 2</div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs text-muted-foreground">
+            <div className="font-medium mb-1">William Go</div>
+            <div>Irvine City Council • District 2</div>
+          </div>
+          {onOpenSettings && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onOpenSettings}
+              className="h-6 w-6"
+            >
+              <Settings className="h-3 w-3" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

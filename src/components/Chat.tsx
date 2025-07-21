@@ -1,17 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Plus, MessageSquare } from 'lucide-react';
+import { Send, Plus, MessageSquare, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ThinkingAnimation } from './ThinkingAnimation';
 import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
+import { ApiKeyModal } from './ApiKeyModal';
 import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: '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',
-  dangerouslyAllowBrowser: true
-});
 
 interface Message {
   id: string;
@@ -71,6 +67,8 @@ export function Chat() {
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingMessage, setThinkingMessage] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [apiKey, setApiKey] = useState<string>('');
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const currentChat = chats.find(chat => chat.id === currentChatId);
@@ -82,6 +80,15 @@ export function Chat() {
   useEffect(() => {
     scrollToBottom();
   }, [currentChat?.messages, isThinking]);
+
+  useEffect(() => {
+    const storedApiKey = localStorage.getItem('openai_api_key');
+    if (storedApiKey) {
+      setApiKey(storedApiKey);
+    } else {
+      setShowApiKeyModal(true);
+    }
+  }, []);
 
   const createNewChat = () => {
     const newChat: ChatData = {
@@ -129,6 +136,11 @@ export function Chat() {
     e.preventDefault();
     if (!input.trim()) return;
 
+    if (!apiKey) {
+      setShowApiKeyModal(true);
+      return;
+    }
+
     let chatId = currentChatId;
     if (!chatId) {
       createNewChat();
@@ -163,6 +175,11 @@ export function Chat() {
     await simulateRAGThinking();
 
     try {
+      const openai = new OpenAI({
+        apiKey: apiKey,
+        dangerouslyAllowBrowser: true
+      });
+
       const response = await openai.chat.completions.create({
         model: 'gpt-4',
         messages: [
@@ -185,7 +202,7 @@ export function Chat() {
       console.error('OpenAI API error:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'I apologize, I encountered a technical issue. Please try again.',
+        content: 'I apologize, I encountered a technical issue. Please check your API key and try again.',
         role: 'assistant',
         timestamp: new Date()
       };
@@ -201,6 +218,15 @@ export function Chat() {
 
   return (
     <div className="flex h-screen bg-background">
+      <ApiKeyModal
+        isOpen={showApiKeyModal}
+        onSave={(key) => {
+          setApiKey(key);
+          setShowApiKeyModal(false);
+        }}
+        onClose={() => setShowApiKeyModal(false)}
+      />
+      
       <Sidebar 
         chats={chats}
         currentChatId={currentChatId}
@@ -208,11 +234,12 @@ export function Chat() {
         onNewChat={createNewChat}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
+        onOpenSettings={() => setShowApiKeyModal(true)}
       />
       
       <div className={`flex-1 flex flex-col ${sidebarOpen ? 'ml-64' : 'ml-0'} transition-all duration-200`}>
         {!sidebarOpen && (
-          <div className="p-4 border-b border-border">
+          <div className="p-4 border-b border-border flex justify-between items-center">
             <Button
               variant="ghost"
               size="icon"
@@ -220,6 +247,14 @@ export function Chat() {
               className="h-8 w-8"
             >
               <MessageSquare className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowApiKeyModal(true)}
+              className="h-8 w-8"
+            >
+              <Settings className="h-4 w-4" />
             </Button>
           </div>
         )}
@@ -239,6 +274,15 @@ export function Chat() {
                   and policy discussions. Ask about Great Park development, transportation, 
                   housing, or any other district priorities.
                 </p>
+                {!apiKey && (
+                  <Button 
+                    onClick={() => setShowApiKeyModal(true)}
+                    className="mt-4"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Set OpenAI API Key
+                  </Button>
+                )}
               </div>
             </div>
           ) : (
@@ -262,14 +306,14 @@ export function Chat() {
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask William Go about District 2, Great Park, transportation, housing..."
+                    placeholder={apiKey ? "Ask William Go about District 2, Great Park, transportation, housing..." : "Please set your OpenAI API key first"}
                     className="pr-12 py-3 text-base border-2 rounded-xl focus:border-primary/50 bg-background"
-                    disabled={isThinking}
+                    disabled={isThinking || !apiKey}
                   />
                   <Button
                     type="submit"
                     size="icon"
-                    disabled={!input.trim() || isThinking}
+                    disabled={!input.trim() || isThinking || !apiKey}
                     className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg bg-primary hover:bg-primary/90"
                   >
                     <Send className="h-4 w-4" />
