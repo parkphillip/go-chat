@@ -528,14 +528,21 @@ export function Chat() {
             <div className="flex-1 flex items-center justify-center p-8">
               <div className="text-center max-w-2xl w-full">
                 {/* William Go faded headshot floating above title */}
-                <div className="mb-4 relative">
-                  <img 
-                    src="/lovable-uploads/f78f4ebf-b392-4cdc-9f00-5b4619ef6205.png" 
-                    alt="William Go, Irvine City Councilmember District 2"
-                    className="w-48 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
-                </div>
+<div className="mb-4 relative">
+  <img 
+    src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
+    alt="William Go, Irvine City Councilmember District 2"
+    className="w-48 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500"
+  />
+  {/* Improved fade with better positioning and gradual transition */}
+  <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white via-white/80 via-white/40 to-transparent" 
+       style={{
+         maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0) 100%)',
+         WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0) 100%)',
+         filter: 'blur(0.5px)'
+       }}>
+  </div>
+</div>
                 <h1 className="text-4xl font-medium text-foreground mb-2 relative z-10">
                   Chat with William Go
                 </h1>
