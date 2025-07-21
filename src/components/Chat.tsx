@@ -505,11 +505,16 @@ export function Chat() {
             <ScrollArea className="flex-1 p-4">
               <div className="max-w-3xl mx-auto space-y-6 py-4">
                 {messages.map((message, index) => {
-                  const isLastAssistantMessage = message.role === 'assistant' && 
-                    index === messages.length - 1 &&
-                    !message.isTyping;
+                  // Only show suggestions on first or second assistant response and when content is general
+                  const isEarlyAssistantMessage = message.role === 'assistant' && 
+                    index <= 3 && // Only first few messages 
+                    !message.isTyping &&
+                    !message.content.includes('?'); // Don't show if response already contains questions
                   
-                  const suggestions = isLastAssistantMessage ? generateSuggestions(message.content) : undefined;
+                  const shouldShowSuggestions = isEarlyAssistantMessage && 
+                    index === messages.length - 1; // Only on the latest message
+                  
+                  const suggestions = shouldShowSuggestions ? generateSuggestions(message.content) : undefined;
 
                   return (
                     <ChatMessage 
@@ -562,7 +567,7 @@ export function Chat() {
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
+                    placeholder={apiKey ? "Ask William Go anything..." : "Please set your OpenAI API key first"}
                     className="w-full pl-6 pr-14 py-5 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                     disabled={isThinking || isProcessingResponse || !apiKey}
                   />
