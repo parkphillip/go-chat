@@ -243,6 +243,15 @@ export function Chat() {
     ));
   };
 
+  const deleteChat = (chatId: string) => {
+    setChats(prev => prev.filter(chat => chat.id !== chatId));
+    
+    // If we're deleting the current chat, switch to a new chat
+    if (currentChatId === chatId) {
+      createNewChat();
+    }
+  };
+
   const addMessage = (chatId: string, message: Message) => {
     if (currentChat) {
       // Update existing chat in history
@@ -591,6 +600,7 @@ export function Chat() {
           setCurrentMessages([]);
         }}
         onNewChat={createNewChat}
+        onDeleteChat={deleteChat}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
