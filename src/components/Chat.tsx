@@ -317,79 +317,89 @@ export function Chat() {
   };
 
   const shouldShowReasoning = (query: string) => {
-    // Check if query is meaningful (not gibberish)
-    const meaningfulWords = [
-      'william', 'go', 'district', 'great', 'park', 'housing', 'transportation', 
-      'bike', 'lanes', 'irvine', 'council', 'policy', 'what', 'how', 'why', 
-      'when', 'where', 'goals', 'priorities', 'plans', 'student', 'youth'
+    const lowerQuery = query.toLowerCase().trim();
+    
+    // Simple greetings and basic responses - no reasoning needed
+    const simpleResponses = [
+      'hello', 'hi', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no',
+      'good morning', 'good afternoon', 'good evening', 'bye', 'goodbye'
     ];
     
-    const queryWords = query.toLowerCase().split(' ');
-    const hasValidWords = queryWords.some(word => 
-      word.length > 2 && (meaningfulWords.includes(word) || /^[a-z]+$/.test(word))
-    );
+    if (simpleResponses.some(phrase => lowerQuery === phrase || lowerQuery.startsWith(phrase + ' '))) {
+      return false;
+    }
     
-    return hasValidWords && query.trim().length > 5;
+    // Very short questions (under 15 characters) probably don't need reasoning
+    if (lowerQuery.length < 15) {
+      return false;
+    }
+    
+    // Complex questions that need reasoning
+    const complexKeywords = [
+      'comprehensive', 'detailed', 'explain', 'overview', 'tell me about', 'describe',
+      'what are your plans', 'policy', 'strategy', 'goals', 'priorities', 'how do you',
+      'what is your position', 'development', 'transportation', 'housing', 'budget'
+    ];
+    
+    return complexKeywords.some(keyword => lowerQuery.includes(keyword));
   };
 
   const getRelevantReasoningSteps = (query: string) => {
     const lowerQuery = query.toLowerCase();
     const steps = [];
     
-    // Always start with database search
-    steps.push("Searching District 2 resident database...");
+    // For comprehensive/complex questions, show full reasoning
+    const isComprehensive = ['comprehensive', 'detailed', 'overview', 'all your', 'tell me about'].some(phrase => 
+      lowerQuery.includes(phrase)
+    );
     
-    if (lowerQuery.includes('william') || lowerQuery.includes('background') || lowerQuery.includes('experience')) {
-      steps.push("Accessing City Council meeting archives...");
-      steps.push("Retrieving William Go's background information...");
-    }
-    if (lowerQuery.includes('great park') || lowerQuery.includes('development')) {
-      steps.push("Connecting to Irvine planning department records...");
-      steps.push("Analyzing Great Park development plans...");
-    }
-    if (lowerQuery.includes('housing') || lowerQuery.includes('affordable')) {
-      steps.push("Loading housing affordability data for Irvine...");
-      steps.push("Retrieving housing policy positions...");
-      steps.push("Analyzing zoning regulation updates...");
-    }
-    if (lowerQuery.includes('transportation') || lowerQuery.includes('bike') || lowerQuery.includes('transit')) {
-      steps.push("Connecting to Irvine transit planning documents...");
-      steps.push("Accessing transportation initiatives...");
-      steps.push("Loading traffic pattern studies...");
-    }
-    if (lowerQuery.includes('student') || lowerQuery.includes('youth') || lowerQuery.includes('education')) {
-      steps.push("Analyzing student concerns across District 2...");
-      steps.push("Fetching community feedback from District 2 residents...");
-    }
-    if (lowerQuery.includes('goal') || lowerQuery.includes('priority') || lowerQuery.includes('plan')) {
-      steps.push("Reviewing William Go's policy positions...");
-      steps.push("Connecting to Orange County planning database...");
-    }
-    
-    // Add budget/cost related steps for financial queries
-    if (lowerQuery.includes('cost') || lowerQuery.includes('budget') || lowerQuery.includes('funding')) {
-      steps.push("Searching budget allocation records...");
-      steps.push("Accessing environmental impact assessments...");
-    }
-    
-    // Default steps if none match - ensure we always have at least 3-4 steps
-    if (steps.length < 2) {
-      steps.push("Gathering District 2 updates...");
-      steps.push("Connecting to Irvine community data...");
-      steps.push("Fetching public safety incident reports...");
-    }
-    
-    // Ensure we have at least 3 steps for longer thinking time
-    while (steps.length < 3) {
-      const additionalSteps = [
-        "Retrieving demographic analysis for District 2...",
-        "Searching community event participation data...",
-        "Accessing environmental impact assessments..."
-      ];
-      const randomStep = additionalSteps[Math.floor(Math.random() * additionalSteps.length)];
-      if (!steps.includes(randomStep)) {
-        steps.push(randomStep);
+    if (isComprehensive) {
+      steps.push("Searching District 2 resident database...");
+      steps.push("Gathering comprehensive policy information...");
+      steps.push("Connecting to Irvine City Council archives...");
+      steps.push("Analyzing William Go's initiatives and positions...");
+      steps.push("Compiling community feedback and priorities...");
+    } else {
+      // For specific topic questions, show relevant steps
+      if (lowerQuery.includes('william') || lowerQuery.includes('background') || lowerQuery.includes('experience')) {
+        steps.push("Accessing William Go's background information...");
+        steps.push("Retrieving City Council meeting records...");
       }
+      if (lowerQuery.includes('great park') || lowerQuery.includes('development')) {
+        steps.push("Connecting to Great Park development records...");
+        steps.push("Analyzing planning department data...");
+      }
+      if (lowerQuery.includes('housing') || lowerQuery.includes('affordable')) {
+        steps.push("Loading housing policy information...");
+        steps.push("Analyzing affordability initiatives...");
+      }
+      if (lowerQuery.includes('transportation') || lowerQuery.includes('bike') || lowerQuery.includes('transit')) {
+        steps.push("Accessing transportation planning documents...");
+        steps.push("Reviewing bike lane and transit initiatives...");
+      }
+      if (lowerQuery.includes('student') || lowerQuery.includes('youth') || lowerQuery.includes('education')) {
+        steps.push("Gathering student and youth program information...");
+        steps.push("Analyzing community education initiatives...");
+      }
+      if (lowerQuery.includes('goal') || lowerQuery.includes('priority') || lowerQuery.includes('plan')) {
+        steps.push("Reviewing policy priorities and goals...");
+        steps.push("Connecting to district planning database...");
+      }
+      if (lowerQuery.includes('cost') || lowerQuery.includes('budget') || lowerQuery.includes('funding')) {
+        steps.push("Accessing budget and funding information...");
+        steps.push("Analyzing cost-benefit assessments...");
+      }
+    }
+    
+    // If no specific topic matched, use general steps (shorter for simpler questions)
+    if (steps.length === 0) {
+      steps.push("Searching District 2 information...");
+      steps.push("Gathering relevant policy data...");
+    }
+    
+    // Ensure at least 2 steps but not more than 5 for non-comprehensive questions
+    if (!isComprehensive && steps.length > 3) {
+      return steps.slice(0, 3);
     }
     
     return steps;
