@@ -525,29 +525,22 @@ export function Chat() {
         
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
           {!messages.length && !isThinking ? (
-            <div className="flex-1 flex items-center justify-center p-8">
+            <div className="flex-1 flex items-center justify-center p-8 -mt-[12vh]">{/* Shifted up by 12% viewport height */}
               <div className="text-center max-w-2xl w-full">
                 {/* William Go faded headshot floating above title */}
-<div className="mb-4 relative">
-  <div className="relative">
-    <img 
-      src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
-      alt="William Go, Irvine City Councilmember District 2"
-      className="w-48 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500"
-    />
-    {/* Enhanced fade with Gaussian blur and brightness matching */}
-    <div className="absolute inset-0">
-      <div 
-        className="absolute bottom-0 left-0 right-0 h-32"
-        style={{
-          background: 'linear-gradient(to top, rgb(255,255,255) 0%, rgba(255,255,255,0.9) 20%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.3) 70%, transparent 100%)',
-          filter: 'blur(2.5px)',
-          maskImage: 'linear-gradient(to top, black 0%, black 60%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to top, black 0%, black 60%, transparent 100%)'
-        }}
-      ></div>
-    </div>
-  </div>
+<div className="mb-4 relative overflow-hidden">
+  <img 
+    src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
+    alt="William Go, Irvine City Councilmember District 2"
+    className="w-48 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500"
+  />
+  {/* Simple, clean fade without lines */}
+  <div 
+    className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+    style={{
+      background: 'linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,0.8) 80%, white 100%)'
+    }}
+  ></div>
 </div>
                 <h1 className="text-4xl font-medium text-foreground mb-2 relative z-10">
                   Chat with William Go
