@@ -1,6 +1,5 @@
-
 import { useState, useRef, useEffect } from 'react';
-import { Send, Edit3, MessageSquare, Settings } from 'lucide-react';
+import { Send, Edit3, MessageSquare, Paperclip, Mic, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -511,20 +510,12 @@ export function Chat() {
             >
               <MessageSquare className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowApiKeyModal(true)}
-              className="h-8 w-8"
-            >
-              <Settings className="h-4 w-4" />
-            </Button>
           </div>
         )}
         
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
           {!messages.length && !isThinking ? (
-            <div className="flex-1 flex items-center justify-center p-8 mt-[2vh]">
+            <div className="flex-1 flex items-center justify-center p-8">
               <div className="text-center max-w-2xl w-full">
                 {/* William Go faded headshot floating above title - scaled up 15% */}
                 <div className="mb-6 relative overflow-hidden">
@@ -548,21 +539,53 @@ export function Chat() {
                   Irvine Councilmember District 2
                 </p>
                 
-                {/* Input form for new chat page */}
-                <form onSubmit={handleSubmit} className="max-w-xl mx-auto mb-6">
+                {/* Enhanced input form for new chat page */}
+                <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-6">
                   <div className="relative">
                     <Input
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       placeholder={apiKey ? `Ask William Go about ${typingText}...` : "Please set your OpenAI API key first"}
-                      className="w-full pl-6 pr-14 py-5 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                      className="w-full pl-6 pr-16 py-7 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                       disabled={isThinking || isProcessingResponse || !apiKey}
                     />
+                    
+                    {/* Bottom icons row */}
+                    <div className="absolute bottom-3 left-6 flex gap-2">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        onClick={() => console.log('Attach file')}
+                      >
+                        <Paperclip className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        onClick={() => console.log('Voice input')}
+                      >
+                        <Mic className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        onClick={() => console.log('Image upload')}
+                      >
+                        <Image className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
                     <Button
                       type="submit"
                       size="icon"
                       disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                     >
                       <Send className="h-4 w-4" />
                     </Button>
@@ -574,7 +597,6 @@ export function Chat() {
                     onClick={() => setShowApiKeyModal(true)}
                     className="mt-4"
                   >
-                    <Settings className="w-4 h-4 mr-2" />
                     Set OpenAI API Key
                   </Button>
                 )}
@@ -639,7 +661,7 @@ export function Chat() {
           )}
           
           
-          {/* Input form for ongoing chat - only show when there are messages */}
+          {/* Enhanced input form for ongoing chat - only show when there are messages */}
           {messages.length > 0 && (
             <div className="p-6">
               <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
@@ -648,14 +670,46 @@ export function Chat() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={apiKey ? "Ask William Go anything..." : "Please set your OpenAI API key first"}
-                    className="w-full pl-6 pr-14 py-5 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
+                    className="w-full pl-6 pr-16 py-7 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                     disabled={isThinking || isProcessingResponse || !apiKey}
                   />
+                  
+                  {/* Bottom icons row */}
+                  <div className="absolute bottom-3 left-6 flex gap-2">
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                      onClick={() => console.log('Attach file')}
+                    >
+                      <Paperclip className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                      onClick={() => console.log('Voice input')}
+                    >
+                      <Mic className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                      onClick={() => console.log('Image upload')}
+                    >
+                      <Image className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
                   <Button
                     type="submit"
                     size="icon"
                     disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                   >
                     <Send className="h-4 w-4" />
                   </Button>

@@ -1,3 +1,4 @@
+
 import { Edit3, MessageSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -30,13 +31,13 @@ export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, isOpen,
   if (!isOpen) return null;
 
   return (
-    <div className="fixed left-0 top-0 h-full w-64 bg-muted/30 border-r border-border flex flex-col z-10">
+    <div className="fixed left-0 top-0 h-full w-64 bg-muted/40 border-r border-border flex flex-col z-10">
       {/* Candid header */}
       <div className="p-4 border-b border-border">
         <Button
           onClick={onNewChat}
           variant="ghost"
-          className="w-full justify-start text-lg font-semibold text-foreground hover:bg-transparent p-0 h-auto"
+          className="w-full justify-start font-semibold text-foreground hover:bg-transparent p-0 h-auto"
         >
           Candid
         </Button>
@@ -92,7 +93,10 @@ export function Sidebar({ chats, currentChatId, onSelectChat, onNewChat, isOpen,
       <div className="p-4 border-t border-border">
         <div className="text-xs text-muted-foreground">
           <div className="font-medium mb-1">William Go</div>
-          <div>Irvine City Council • District 2</div>
+          <div className="mb-3">Irvine City Council • District 2</div>
+          <div className="text-xs text-muted-foreground/70">
+            Powered by Candid
+          </div>
         </div>
       </div>
     </div>
