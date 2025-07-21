@@ -49,7 +49,7 @@ export function ChatMessage({ message, onTypingComplete }: ChatMessageProps) {
               <TypingAnimation 
                 text={message.content} 
                 onComplete={onTypingComplete}
-                speed={25}
+                speed={15}
               />
             ) : (
               message.content

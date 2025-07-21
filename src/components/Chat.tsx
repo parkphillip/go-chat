@@ -46,7 +46,7 @@ Your District 2 Priorities:
 - Safe neighborhoods and public safety
 - Student and youth engagement
 
-Always speak as William Go directly - use "I" statements, reference your personal experience, and connect your background to how you're working for District 2 residents. Be conversational, personal, and solution-oriented.`;
+RESPONSE STYLE: Keep responses brief (2-3 sentences max). Always end with 2-3 specific follow-up questions to guide the conversation deeper. Use "I" statements and be conversational. Focus on one main point per response.`;
 
 const ragMessages = [
   "Analyzing student concerns across District 2...",
@@ -70,6 +70,7 @@ export function Chat() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [apiKey, setApiKey] = useState<string>('');
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [isProcessingResponse, setIsProcessingResponse] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const currentChat = chats.find(chat => chat.id === currentChatId);
@@ -177,11 +178,11 @@ export function Chat() {
       setThinkingMessage(step);
       setIsThinking(true);
       
-      // Each step takes 1-2 seconds
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+      // Each step takes 800ms-1.2s (faster)
+      await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
     }
     
-    setIsThinking(false);
+    // Don't stop thinking here - let the response handle it
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -223,6 +224,7 @@ export function Chat() {
 
     const userInput = input;
     setInput('');
+    setIsProcessingResponse(true);
     
     // Conditionally simulate RAG thinking
     if (shouldShowReasoning(userInput)) {
@@ -241,7 +243,7 @@ export function Chat() {
           { role: 'system', content: WILLIAM_GO_CONTEXT },
           { role: 'user', content: userInput }
         ],
-        max_tokens: 500,
+        max_tokens: 150,
         temperature: 0.7
       });
 
@@ -253,6 +255,9 @@ export function Chat() {
         isTyping: true
       };
 
+      // Transition from thinking to typing
+      setIsThinking(false);
+      setIsProcessingResponse(false);
       addMessage(chatId, assistantMessage);
     } catch (error) {
       console.error('OpenAI API error:', error);
@@ -263,6 +268,8 @@ export function Chat() {
         timestamp: new Date(),
         isTyping: true
       };
+      setIsThinking(false);
+      setIsProcessingResponse(false);
       addMessage(chatId, errorMessage);
     }
   };
@@ -366,7 +373,7 @@ export function Chat() {
                     }}
                   />
                 ))}
-                {isThinking && (
+                {(isThinking || isProcessingResponse) && (
                   <ThinkingAnimation message={thinkingMessage} />
                 )}
                 <div ref={messagesEndRef} />
@@ -383,12 +390,12 @@ export function Chat() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={apiKey ? "Ask William Go about District 2, Great Park, transportation, housing..." : "Please set your OpenAI API key first"}
                     className="pr-12 py-3 text-base border-2 rounded-xl focus:border-primary/50 bg-background"
-                    disabled={isThinking || !apiKey}
+                    disabled={isThinking || isProcessingResponse || !apiKey}
                   />
                   <Button
                     type="submit"
                     size="icon"
-                    disabled={!input.trim() || isThinking || !apiKey}
+                    disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
                     className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg bg-primary hover:bg-primary/90"
                   >
                     <Send className="h-4 w-4" />
