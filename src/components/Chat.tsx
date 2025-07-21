@@ -563,9 +563,9 @@ export function Chat() {
                       type="submit"
                       size="icon"
                       disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-primary hover:bg-primary/90"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                     >
-                      <Send className="h-5 w-5" />
+                      <Send className="h-4 w-4" />
                     </Button>
                   </div>
                 </form>
@@ -656,9 +656,9 @@ export function Chat() {
                     type="submit"
                     size="icon"
                     disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-primary hover:bg-primary/90"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                   >
-                    <Send className="h-4 w-5" />
+                    <Send className="h-4 w-4" />
                   </Button>
                 </div>
               </form>

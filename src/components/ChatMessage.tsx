@@ -39,8 +39,12 @@ export function ChatMessage({ message, onTypingComplete, suggestions, onSuggesti
       {!isUser && (
         <>
           <div className="flex gap-3 mb-4">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
-              WG
+            <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden">
+              <img 
+                src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
+                alt="William Go"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="flex flex-col max-w-[75%] items-start">
               <div className="px-4 py-3 rounded-2xl bg-muted/50 rounded-bl-md">
