@@ -350,7 +350,7 @@ export function Chat() {
   }, []);
 
   return (
-    <div className="flex h-screen bg-background font-berkeley">
+    <div className="flex h-screen bg-background">
       <ApiKeyModal
         isOpen={showApiKeyModal}
         onSave={(key) => {
