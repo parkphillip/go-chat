@@ -76,9 +76,9 @@ export function Chat() {
   const [isProcessingResponse, setIsProcessingResponse] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Typing animation for placeholder
+  // Typing animation for placeholder (only for new chat)
   const typingText = useTypingAnimation({
-    words: ['policy...', 'goals...', 'the great park...', 'housing...', 'bike lanes...', 'transportation...', 'community...'],
+    words: ['policy', 'goals', 'the great park', 'housing', 'bike lanes', 'transportation', 'community'],
     typeSpeed: 80,
     deleteSpeed: 40,
     pauseDuration: 6500
@@ -562,7 +562,7 @@ export function Chat() {
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={apiKey ? `Ask William Go about ${typingText}...` : "Please set your OpenAI API key first"}
+                    placeholder={apiKey ? "Ask William Go about District 2..." : "Please set your OpenAI API key first"}
                     className="w-full pl-6 pr-14 py-5 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                     disabled={isThinking || isProcessingResponse || !apiKey}
                   />
