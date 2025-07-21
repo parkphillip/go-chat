@@ -534,7 +534,7 @@ export function Chat() {
                     alt="William Go, Irvine City Councilmember District 2"
                     className="w-48 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background"></div>
+                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
                 </div>
                 <h1 className="text-4xl font-medium text-foreground mb-2 relative z-10">
                   Chat with William Go
