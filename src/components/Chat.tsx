@@ -527,6 +527,14 @@ export function Chat() {
           {!messages.length && !isThinking ? (
             <div className="flex-1 flex items-center justify-center p-8">
               <div className="text-center max-w-2xl w-full">
+                {/* William Go headshot with polished styling */}
+                <div className="mb-8">
+                  <img 
+                    src="/lovable-uploads/f78f4ebf-b392-4cdc-9f00-5b4619ef6205.png" 
+                    alt="William Go, Irvine City Councilmember District 2"
+                    className="w-28 h-28 mx-auto object-cover rounded-full shadow-xl ring-4 ring-primary/10 hover:ring-primary/20 transition-all duration-300"
+                  />
+                </div>
                 <h1 className="text-4xl font-medium text-foreground mb-2">
                   Chat with William Go
                 </h1>
