@@ -397,7 +397,9 @@ export function Chat() {
                   />
                 ))}
                 {(isThinking || isProcessingResponse) && (
-                  <ThinkingAnimation message={thinkingMessage} />
+                  <div>
+                    <ThinkingAnimation message={thinkingMessage} />
+                  </div>
                 )}
                 <div ref={messagesEndRef} />
               </div>
