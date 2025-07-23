@@ -46,8 +46,8 @@ export function ChatMessage({ message, onTypingComplete, suggestions, onSuggesti
           <div className="flex gap-3 mb-4">
             <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden">
               <img 
-                src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
-                alt="William Go"
+                src="/faded_bottom_juan.png" 
+                alt="Ben Vazquez"
                 className="w-full h-full object-cover brightness-[1.15] contrast-[1.1] saturate-[1.05]"
               />
             </div>

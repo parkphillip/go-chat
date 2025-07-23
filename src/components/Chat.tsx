@@ -29,34 +29,7 @@ interface ChatData {
   escalationSent?: boolean;
 }
 
-const WILLIAM_GO_CONTEXT = `You are William Go, Irvine City Councilmember for District 2. You are speaking directly to constituents and students.
-
-Your Background:
-- First Chinese-Filipino American on Irvine City Council, elected November 2024
-- First to represent District 2
-- Immigrant from Philippines, first-generation college graduate
-- BS Computer Engineering + MBA from UCI
-- Software engineer & product manager at Broadcom
-- Built real estate & hospitality portfolio (30+ locations), licensed broker
-- Community service: lifeguard/swim coach, UCI Bike Ambassador supporter, Great Park Task Force & Irvine Transportation Commission member
-- Ironman triathlete, cyclist, long-distance runner
-- 20+ year Irvine resident in Great Park neighborhood
-
-Your District 2 Priorities:
-- Great Park development and optimization
-- Protected bike lanes and cycling infrastructure
-- Expanded Irvine Connect shuttle service
-- Traffic and transportation improvements
-- Housing affordability initiatives
-- Safe neighborhoods and public safety
-- Student and youth engagement
-
-RESPONSE STYLE: 
-- For specific questions: Provide comprehensive, detailed answers (3-5 sentences) with concrete information, timelines, and specifics
-- For broad questions (like "what are your policies"): Keep responses brief (2-3 sentences) as an overview
-- Use "I" statements and be conversational but authoritative
-- Provide definitive, actionable information when possible
-- Focus on concrete plans, timelines, and specific initiatives rather than vague responses`;
+const BEN_VAZQUEZ_CONTEXT = `You are Benjamin “Ben” Vazquez, Santa Ana Mayor Pro Tem and Councilmember (Ward 2). You are speaking directly to constituents, students, and residents of Santa Ana. Use ONLY the information below to answer questions. If the answer can be found or reasonably deduced from the information below, answer as fully as possible. If the answer truly cannot be found in the information, respond ONLY with: “I can’t answer this because I don’t have the data. Please use the ‘Contact Ben Vazquez’s Team’ button below to send your question directly to the team.” Do not speculate, guess, or make up information.`;
 
 const ragMessages = [
   "Searching District 2 resident database...",
@@ -193,14 +166,14 @@ export function Chat() {
     }
     
     // Placeholder for future Supabase integration
-    console.log('Question forwarded to William Go\'s team');
+    console.log('Question forwarded to Ben Vazquez\'s team');
   };
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, isThinking]);
 
-  const OPENAI_API_KEY = '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';
+  const OPENAI_API_KEY = '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';
 
   const createNewChat = () => {
     // If there's a current conversation with messages, save it to history
@@ -380,12 +353,12 @@ export function Chat() {
       steps.push("Searching District 2 resident database...");
       steps.push("Gathering comprehensive policy information...");
       steps.push("Connecting to Irvine City Council archives...");
-      steps.push("Analyzing William Go's initiatives and positions...");
+      steps.push("Analyzing Ben Vazquez's initiatives and positions...");
       steps.push("Compiling community feedback and priorities...");
     } else {
       // For specific topic questions, show relevant steps
-      if (lowerQuery.includes('william') || lowerQuery.includes('background') || lowerQuery.includes('experience')) {
-        steps.push("Accessing William Go's background information...");
+      if (lowerQuery.includes('ben') || lowerQuery.includes('background') || lowerQuery.includes('experience')) {
+        steps.push("Accessing Ben Vazquez's background information...");
         steps.push("Retrieving City Council meeting records...");
       }
       if (lowerQuery.includes('great park') || lowerQuery.includes('development')) {
@@ -534,7 +507,7 @@ export function Chat() {
       const response = await openai.chat.completions.create({
         model: 'gpt-4.1-2025-04-14',
         messages: [
-          { role: 'system', content: WILLIAM_GO_CONTEXT },
+          { role: 'system', content: BEN_VAZQUEZ_CONTEXT },
           { role: 'user', content: userInput }
         ],
         max_tokens: getTokenLimit(userInput),
@@ -543,12 +516,16 @@ export function Chat() {
 
       console.log('OpenAI response received');
 
+      let assistantContent = response.choices[0]?.message?.content || 'I apologize, I encountered an issue generating a response.';
+      const escalationMsg = "I can’t answer this because I don’t have the data. Please use the ‘Contact Ben Vazquez’s Team’ button below to send your question directly to the team.";
+      const needsEscalation = assistantContent.trim() === escalationMsg;
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: response.choices[0]?.message?.content || 'I apologize, I encountered an issue generating a response.',
+        content: assistantContent,
         role: 'assistant',
         timestamp: new Date(),
-        isTyping: true
+        isTyping: true,
+        ...(needsEscalation ? { needsEscalation: true } : {})
       };
 
       // Transition from thinking to typing
@@ -633,8 +610,8 @@ export function Chat() {
                 {/* William Go faded headshot floating above title - scaled up 15% */}
                 <div className="mb-6 relative overflow-hidden">
                   <img 
-                    src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
-                    alt="William Go, Irvine City Councilmember District 2"
+                    src="/faded_bottom_juan.png" 
+                    alt="Ben Vazquez, Santa Ana Mayor Pro Tem and Councilmember (Ward 2)"
                     className="w-52 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500 brightness-[1.15] contrast-[1.1] saturate-[1.05]"
                   />
                   {/* Simple, clean fade without lines */}
@@ -646,10 +623,10 @@ export function Chat() {
                   ></div>
                 </div>
                 <h1 className="text-4xl font-medium text-foreground mb-3 relative z-10">
-                  Chat with William Go
+                  Chat with Ben Vazquez
                 </h1>
                 <p className="text-base text-muted-foreground mb-6">
-                  Irvine Councilmember District 2
+                  Santa Ana Mayor Pro Tem & Councilmember (Ward 2)
                 </p>
                 
                 {/* Enhanced input form for new chat page */}
@@ -658,7 +635,7 @@ export function Chat() {
                     <Input
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      placeholder={`Ask William Go about ${typingText}...`}
+                      placeholder={`Ask Ben Vazquez about ${typingText}...`}
                       className="w-full pl-6 pr-16 pt-6 pb-16 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                       disabled={isThinking || isProcessingResponse}
                     />
@@ -787,7 +764,7 @@ export function Chat() {
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={`Ask William Go anything...`}
+                    placeholder={`Ask Ben Vazquez anything...`}
                     className="w-full pl-6 pr-16 pt-6 pb-16 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
                     disabled={isThinking || isProcessingResponse}
                   />

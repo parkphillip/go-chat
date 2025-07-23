@@ -58,7 +58,7 @@ export function EscalationModal({ isOpen, onClose, onSubmit }: EscalationModalPr
             </div>
             <h3 className="text-lg font-medium text-foreground mb-1">Question Sent!</h3>
             <p className="text-sm text-muted-foreground">
-              Your question has been forwarded to William Go's team. You'll receive a response soon.
+              Your question has been forwarded to Ben Vazquez's team. You'll receive a response soon.
             </p>
           </div>
         </div>
@@ -72,7 +72,7 @@ export function EscalationModal({ isOpen, onClose, onSubmit }: EscalationModalPr
       <div className="relative bg-card border border-border rounded-lg max-w-lg mx-4 shadow-lg animate-scale-in">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="text-lg font-medium text-foreground">Contact William Go's Team</h2>
+          <h2 className="text-lg font-medium text-foreground">Contact Ben Vazquez's Team</h2>
           <Button
             variant="ghost"
             size="icon"
@@ -102,7 +102,7 @@ export function EscalationModal({ isOpen, onClose, onSubmit }: EscalationModalPr
           
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">
-              This will be sent directly to William Go's team for a personalized response.
+              This will be sent directly to Ben Vazquez's team for a personalized response.
             </p>
             <Button
               type="submit"
