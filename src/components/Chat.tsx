@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ThinkingAnimation } from './ThinkingAnimation';
 import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
-import { ApiKeyModal } from './ApiKeyModal';
+// REMOVE: import { ApiKeyModal } from './ApiKeyModal';
 import { useTypingAnimation } from '@/hooks/use-typing-animation';
 import { useEscalationDetection } from '@/hooks/use-escalation-detection';
 import OpenAI from 'openai';
@@ -89,8 +89,6 @@ export function Chat() {
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingMessage, setThinkingMessage] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [apiKey, setApiKey] = useState<string>('');
-  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [isProcessingResponse, setIsProcessingResponse] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -202,14 +200,7 @@ export function Chat() {
     scrollToBottom();
   }, [messages, isThinking]);
 
-  useEffect(() => {
-    const storedApiKey = localStorage.getItem('openai_api_key');
-    if (storedApiKey) {
-      setApiKey(storedApiKey);
-    } else {
-      setShowApiKeyModal(true);
-    }
-  }, []);
+  const OPENAI_API_KEY = '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';
 
   const createNewChat = () => {
     // If there's a current conversation with messages, save it to history
@@ -490,11 +481,6 @@ export function Chat() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    if (!apiKey) {
-      setShowApiKeyModal(true);
-      return;
-    }
-
     let chatId = currentChatId;
     if (!chatId) {
       // Create temporary chat ID for current conversation
@@ -539,7 +525,7 @@ export function Chat() {
 
     try {
       const openai = new OpenAI({
-        apiKey: apiKey,
+        apiKey: OPENAI_API_KEY,
         dangerouslyAllowBrowser: true
       });
 
@@ -573,11 +559,14 @@ export function Chat() {
       addMessage(chatId, assistantMessage);
 
       // Save chat to history after first assistant response if not already saved
-      if (!currentChat && messages.length >= 1) {
+      // Always add the chat to the sidebar after the first assistant response if it's not already there
+      const chatExists = chats.some(chat => chat.id === chatId);
+      if (!chatExists) {
+        // Use the userMessage and assistantMessage directly for new chat
         const chatToSave: ChatData = {
           id: chatId,
-          title: messages[0]?.content.slice(0, 30) + (messages[0]?.content.length > 30 ? '...' : '') || 'New Chat',
-          messages: [...messages, assistantMessage],
+          title: userMessage.content.slice(0, 30) + (userMessage.content.length > 30 ? '...' : ''),
+          messages: [userMessage, assistantMessage],
           lastModified: new Date()
         };
         setChats(prev => [chatToSave, ...prev]);
@@ -606,14 +595,7 @@ export function Chat() {
 
   return (
     <div className="flex h-screen bg-background">
-      <ApiKeyModal
-        isOpen={showApiKeyModal}
-        onSave={(key) => {
-          setApiKey(key);
-          setShowApiKeyModal(false);
-        }}
-        onClose={() => setShowApiKeyModal(false)}
-      />
+      {/* REMOVE: The ApiKeyModal component */}
       
       <Sidebar 
         chats={chats.filter(chat => !chat.archived)}
@@ -629,31 +611,20 @@ export function Chat() {
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
       
-      {/* Floating sidebar trigger - only visible when sidebar is closed and there are messages */}
-      {!sidebarOpen && messages.length > 0 && (
+      {/* Floating sidebar trigger - only visible when sidebar is closed */}
+      {!sidebarOpen && (
         <Button
           variant="outline"
           size="icon"
           onClick={() => setSidebarOpen(true)}
-          className="fixed left-4 top-4 z-20 h-10 w-10 bg-background shadow-lg hover:shadow-xl transition-all duration-200"
+          className="fixed left-4 top-4 z-20 h-10 w-10 border border-border rounded-full bg-background shadow hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+          style={{ boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)', borderWidth: 1, borderStyle: 'solid' }}
         >
-          <PanelLeft className="h-4 w-4" />
+          <PanelLeft className="h-4 w-4 text-muted-foreground" />
         </Button>
       )}
       
       <div className={`flex-1 flex flex-col ${sidebarOpen ? 'ml-64' : 'ml-0'} transition-all duration-200`}>
-        {!sidebarOpen && !messages.length && (
-          <div className="p-4 border-b border-border flex justify-between items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(true)}
-              className="h-8 w-8"
-            >
-              <MessageSquare className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
         
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
           {!messages.length && !isThinking ? (
@@ -662,7 +633,7 @@ export function Chat() {
                 {/* William Go faded headshot floating above title - scaled up 15% */}
                 <div className="mb-6 relative overflow-hidden">
                   <img 
-                    src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
+                    src="/faded_bottom_juan.png" 
                     alt="William Go, Irvine City Councilmember District 2"
                     className="w-52 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500 brightness-[1.15] contrast-[1.1] saturate-[1.05]"
                   />
@@ -687,9 +658,9 @@ export function Chat() {
                     <Input
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      placeholder={apiKey ? `Ask William Go about ${typingText}...` : "Please set your OpenAI API key first"}
+                      placeholder={`Ask William Go about ${typingText}...`}
                       className="w-full pl-6 pr-16 pt-6 pb-16 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
-                      disabled={isThinking || isProcessingResponse || !apiKey}
+                      disabled={isThinking || isProcessingResponse}
                     />
                     
                     {/* Bottom icons row - 2 left, 1 right */}
@@ -728,7 +699,7 @@ export function Chat() {
                        <Button
                          type="submit"
                          size="icon"
-                         disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
+                         disabled={!input.trim() || isThinking || isProcessingResponse}
                          className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                        >
                          <Send className="h-4 w-4" />
@@ -737,14 +708,7 @@ export function Chat() {
                   </div>
                 </form>
                 
-                {!apiKey && (
-                  <Button 
-                    onClick={() => setShowApiKeyModal(true)}
-                    className="mt-4"
-                  >
-                    Set OpenAI API Key
-                  </Button>
-                )}
+                {/* REMOVE: The Button that says 'Set OpenAI API Key' */}
               </div>
             </div>
           ) : (
@@ -823,9 +787,9 @@ export function Chat() {
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={apiKey ? "Ask William Go anything..." : "Please set your OpenAI API key first"}
+                    placeholder={`Ask William Go anything...`}
                     className="w-full pl-6 pr-16 pt-6 pb-16 text-base rounded-3xl border-0 shadow-lg bg-background focus:ring-2 focus:ring-primary/20 focus:shadow-xl transition-all"
-                    disabled={isThinking || isProcessingResponse || !apiKey}
+                    disabled={isThinking || isProcessingResponse}
                   />
                   
                    {/* Bottom icons row - 2 left, 1 right */}
@@ -864,7 +828,7 @@ export function Chat() {
                      <Button
                        type="submit"
                        size="icon"
-                       disabled={!input.trim() || isThinking || isProcessingResponse || !apiKey}
+                       disabled={!input.trim() || isThinking || isProcessingResponse}
                        className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                      >
                        <Send className="h-4 w-4" />
