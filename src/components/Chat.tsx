@@ -633,7 +633,7 @@ export function Chat() {
                 {/* William Go faded headshot floating above title - scaled up 15% */}
                 <div className="mb-6 relative overflow-hidden">
                   <img 
-                    src="/faded_bottom_juan.png" 
+                    src="/lovable-uploads/c622cd8f-f6ed-41b9-8876-4f58b3b2bd7f.png" 
                     alt="William Go, Irvine City Councilmember District 2"
                     className="w-52 h-auto mx-auto object-cover opacity-75 hover:opacity-85 transition-opacity duration-500 brightness-[1.15] contrast-[1.1] saturate-[1.05]"
                   />
